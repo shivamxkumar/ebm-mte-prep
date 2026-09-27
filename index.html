@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EBM MTE Prep · Management, made simple</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#000000; --bg2:#141414; --card:#0D0D0D; --card2:#171717;
+  --ink:#F6F1E4; --muted:#A9A396; --line:#2B2B2B;
+  --gold:#F5B82E; --gold2:#E0A21A; --goldDeep:#7A5200; --deep:#F5B82E;
+  --onGold:#1A1200; --green:#34D399; --red:#F87171;
+  --grid:rgba(245,184,46,.05);
+  --shadow:0 0 0 1px rgba(255,255,255,.02) inset, 0 18px 40px -18px rgba(0,0,0,.9);
+  --key:0 6px 0 #7A5200, 0 14px 26px -8px rgba(245,184,46,.25);
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"Figtree","Segoe UI",system-ui,-apple-system,sans-serif;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#000000;--ink:#F6F1E4}}
+:root[data-theme="dark"]{--bg:#000000;--ink:#F6F1E4}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 80px);scroll-behavior:smooth;background:#000}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;font-family:var(--body);color:var(--ink);background:var(--bg);font-size:17px;line-height:1.6;overflow-x:hidden;
+  background-image:radial-gradient(ellipse 80% 50% at 70% -10%,rgba(245,184,46,.14),transparent 60%),
+    linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:100% 100%,36px 36px,36px 36px;background-attachment:fixed,scroll,scroll}
+img,svg{max-width:100%}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.15;margin:0 0 .5em;letter-spacing:-.01em}
+a{color:var(--gold)}
+b,strong{color:#fff}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+/* Splash */
+#splash{position:fixed;inset:0;z-index:100;display:grid;place-items:center;
+  background:radial-gradient(circle at 50% 42%,#3a2800 0%,#0d0900 38%,#000 70%);color:#fff;
+  transition:opacity .7s ease, transform .7s ease;cursor:pointer;perspective:900px}
+#splash.hide{opacity:0;transform:scale(1.08);pointer-events:none}
+.splash-in{text-align:center;padding:24px;transform-style:preserve-3d;animation:spin3d 2.4s cubic-bezier(.2,.8,.2,1) both}
+@keyframes spin3d{0%{transform:rotateX(70deg) translateZ(-300px);opacity:0}60%{transform:rotateX(-8deg) translateZ(40px);opacity:1}100%{transform:none}}
+.splash-emoji{font-size:clamp(72px,16vw,130px);display:inline-block;animation:bounce 1.1s ease-in-out infinite;filter:drop-shadow(0 0 28px rgba(245,184,46,.55))}
+@keyframes bounce{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-18px) rotate(6deg)}}
+.splash-small{font-size:clamp(16px,3.5vw,22px);color:var(--muted);margin-top:14px;letter-spacing:.02em}
+.splash-name{font-family:var(--display);font-weight:800;font-size:clamp(40px,10vw,92px);line-height:1;margin:6px 0 0;color:var(--gold);
+  text-shadow:0 2px 0 #C98F0F,0 4px 0 #9E6F06,0 6px 0 #7A5200,0 16px 30px rgba(245,184,46,.35)}
+.splash-name span{display:inline-block;animation:rise .6s cubic-bezier(.2,.9,.3,1.4) both}
+@keyframes rise{from{transform:translateY(40px) rotateX(90deg);opacity:0}to{transform:none;opacity:1}}
+.splash-bar{width:min(280px,70vw);height:6px;border-radius:9px;background:#262626;margin:28px auto 8px;overflow:hidden}
+.splash-bar i{display:block;height:100%;width:0;background:var(--gold);border-radius:9px;animation:load 2.4s ease forwards;box-shadow:0 0 12px var(--gold)}
+@keyframes load{to{width:100%}}
+.splash-link{color:var(--gold);font-weight:700;font-size:clamp(16px,3.4vw,20px);margin-top:14px;letter-spacing:.02em}
+.nav a.port{color:var(--onGold);background:var(--gold);box-shadow:0 3px 0 var(--goldDeep)}
+.nav a.port:hover{background:#FFD66B;color:var(--onGold)}
+.splash-skip{font-size:14px;color:var(--muted)}
+
+/* Header */
+.topbar{position:sticky;top:0;z-index:50;padding-top:env(safe-area-inset-top,0px);
+  background:rgba(0,0,0,.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.topbar .wrap{display:flex;align-items:center;gap:14px;height:62px}
+.brand{font-family:var(--display);font-weight:800;font-size:20px;display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);white-space:nowrap}
+.brand b{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--gold);color:var(--onGold);box-shadow:0 4px 0 var(--goldDeep);font-size:18px}
+.nav{display:flex;gap:4px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav a{text-decoration:none;color:var(--ink);font-weight:600;font-size:15px;padding:8px 12px;border-radius:10px;white-space:nowrap}
+.nav a:hover{background:var(--bg2);color:var(--gold)}
+.scrollbar{position:absolute;left:0;bottom:-1px;height:3px;width:0;background:linear-gradient(90deg,#7A5200,var(--gold),#FFE7A3);box-shadow:0 0 10px var(--gold)}
+
+/* Hero */
+.hero{padding:56px 0 40px;position:relative}
+.hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}
+.hero h1{font-size:clamp(38px,6vw,66px);font-weight:800;margin-bottom:16px;color:#fff}
+.hero h1 .l2{display:block;color:transparent;-webkit-text-stroke:1.5px var(--gold)}
+.hero p.lead{font-size:19px;color:var(--muted);max-width:56ch;margin:0 0 24px}
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:14px;padding:13px 20px;font-weight:700;font-size:16px;text-decoration:none;
+  background:var(--gold);color:var(--onGold);box-shadow:0 5px 0 var(--goldDeep);transition:transform .12s, box-shadow .12s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--goldDeep)}
+.btn.ghost{background:var(--card2);color:var(--ink);box-shadow:0 5px 0 #000;border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--gold)}
+.btn.ghost:active{box-shadow:0 1px 0 #000}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px}
+.progress-card{margin-top:26px;display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 18px;box-shadow:var(--shadow);max-width:430px}
+.ring{--p:0;width:64px;height:64px;border-radius:50%;flex:none;display:grid;place-items:center;background:conic-gradient(var(--gold) calc(var(--p)*1%),#262626 0)}
+.ring span{width:48px;height:48px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-weight:700;font-size:14px;color:var(--gold)}
+.progress-card small{color:var(--muted);display:block;font-size:14px}
+
+/* Cube */
+.stage{perspective:1100px;display:grid;place-items:center;min-height:360px;position:relative}
+.cube{--s:190px;width:var(--s);height:var(--s);position:relative;transform-style:preserve-3d;animation:cube 18s linear infinite}
+.stage:hover .cube{animation-play-state:paused}
+@keyframes cube{from{transform:rotateX(-22deg) rotateY(0)}to{transform:rotateX(-22deg) rotateY(360deg)}}
+.face{position:absolute;inset:0;display:grid;place-items:center;text-align:center;border-radius:22px;color:var(--gold);
+  font-family:var(--display);font-weight:800;font-size:23px;padding:14px;border:2px solid var(--gold);backface-visibility:hidden;
+  background:linear-gradient(145deg,#1f1f1f,#050505);box-shadow:inset 0 0 40px rgba(245,184,46,.12),0 0 24px rgba(245,184,46,.15)}
+.face em{display:block;font-style:normal;font-family:var(--body);font-weight:500;font-size:13px;color:var(--muted);margin-top:4px}
+.face .ic{font-size:40px;line-height:1;margin-bottom:6px}
+.f1{transform:translateZ(calc(var(--s)/2))}
+.f2{transform:rotateY(90deg) translateZ(calc(var(--s)/2))}
+.f3{transform:rotateY(180deg) translateZ(calc(var(--s)/2))}
+.f4{transform:rotateY(-90deg) translateZ(calc(var(--s)/2))}
+.f5{transform:rotateX(90deg) translateZ(calc(var(--s)/2));background:linear-gradient(145deg,#FFD66B,#C98F0F);color:var(--onGold)}
+.f5 em{color:#3b2a00}
+.f6{transform:rotateX(-90deg) translateZ(calc(var(--s)/2))}
+.shadow-floor{position:absolute;bottom:18px;width:220px;height:34px;border-radius:50%;background:radial-gradient(rgba(245,184,46,.35),transparent 70%);filter:blur(6px)}
+.gear{position:absolute;color:var(--gold);opacity:.35}
+.gear.g1{top:4%;left:6%;width:64px;animation:rot 12s linear infinite}
+.gear.g2{bottom:10%;right:4%;width:88px;animation:rot 16s linear infinite reverse}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* Sections */
+section.block{padding:48px 0}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.sec-head h2{font-size:clamp(30px,4.4vw,44px);margin:0;color:#fff}
+.sec-head h2::after{content:"";display:block;width:56px;height:4px;border-radius:4px;background:var(--gold);margin-top:10px}
+.sec-head p{color:var(--muted);margin:10px 0 0;max-width:60ch}
+
+.index{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.tcard{position:relative;display:block;text-decoration:none;color:var(--ink);background:linear-gradient(160deg,#161616,#080808);border:1px solid var(--line);border-radius:18px;padding:16px 16px 14px;
+  box-shadow:var(--shadow);transform-style:preserve-3d;transition:transform .2s ease, border-color .2s}
+.tcard:hover{border-color:var(--gold)}
+.tcard .ico{font-size:28px;display:block;transform:translateZ(30px)}
+.tcard h3{font-size:17px;margin:8px 0 2px;transform:translateZ(20px);color:#fff}
+.tcard small{color:var(--muted);font-size:13px}
+.tcard .num{position:absolute;top:12px;right:14px;font-family:var(--display);font-weight:800;color:#2f2f2f;font-size:26px}
+.tcard.done{border-color:var(--green)}
+.tcard.done::after{content:"✓ studied";position:absolute;bottom:12px;right:14px;font-size:12px;font-weight:700;color:var(--green)}
+.hot{display:inline-block;background:rgba(245,184,46,.14);color:var(--gold);border:1px solid rgba(245,184,46,.4);font-weight:700;font-size:12px;border-radius:999px;padding:1px 9px;margin-top:6px}
+
+.topic{background:var(--card);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow);margin:0 0 28px;overflow:hidden}
+.topic-head{display:flex;gap:16px;align-items:center;padding:22px 24px;background:linear-gradient(120deg,rgba(245,184,46,.10),transparent 60%);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.topic-head .big{font-size:40px;width:64px;height:64px;display:grid;place-items:center;border-radius:18px;background:#111;box-shadow:var(--key);border:2px solid var(--gold);flex:none}
+.topic-head h2{font-size:clamp(24px,3.4vw,34px);margin:0;color:#fff}
+.topic-head p{margin:2px 0 0;color:var(--muted);font-size:15px}
+.topic-head .grow{flex:1;min-width:220px}
+.mark{border:2px solid var(--line);background:#111;color:var(--ink);font-weight:700;border-radius:12px;padding:9px 14px;font-size:14px}
+.mark:hover{border-color:var(--gold)}
+.mark.on{background:var(--green);border-color:var(--green);color:#022c1d}
+.tabs{display:flex;gap:6px;padding:14px 24px 0;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:12px 12px 0 0;padding:9px 16px;font-weight:700;font-size:15px;border-bottom:0}
+.tab[aria-selected="true"]{background:var(--gold);color:var(--onGold);border-color:var(--gold)}
+.panes{border-top:1px solid var(--line);padding:22px 24px 26px}
+.pane[hidden]{display:none}
+.pane h3{font-size:22px;margin-top:22px;color:var(--gold)}
+.pane h3:first-child{margin-top:0}
+.pane h4{font-size:18px;margin:18px 0 6px}
+.pane p,.pane li{max-width:78ch}
+.pane ul,.pane ol{padding-left:22px;margin:.3em 0 1em}
+.pane li{margin:4px 0}
+.pane li::marker{color:var(--gold)}
+.def{border-left:4px solid var(--gold);background:var(--card2);padding:10px 16px;border-radius:0 14px 14px 0;margin:10px 0}
+.def b{color:var(--gold)}
+.mnemo{background:rgba(245,184,46,.08);border:1px dashed var(--gold);border-radius:16px;padding:12px 16px;margin:16px 0;font-weight:500}
+.mnemo::before{content:"🧠 Memory trick: ";font-weight:800;color:var(--gold)}
+.scroll-x{overflow-x:auto;margin:12px 0}
+table{border-collapse:separate;border-spacing:0;width:100%;min-width:520px;font-size:15.5px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{background:var(--gold);color:var(--onGold);font-family:var(--display);font-weight:700}
+tr:last-child td{border-bottom:0}
+tr:nth-child(even) td{background:var(--card2)}
+
+/* Flowcharts */
+.flowbox{background:radial-gradient(ellipse at 50% 0%,rgba(245,184,46,.07),transparent 60%),#070707;border:1px solid var(--line);border-radius:20px;padding:20px 16px;margin:14px 0 22px;overflow:hidden}
+.flowbox > h4{margin:0 0 14px;font-size:17px;color:var(--gold);text-align:center}
+.node{--i:0;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px;
+  background:linear-gradient(160deg,#FFD66B,#E0A21A);color:var(--onGold);font-weight:700;font-size:15px;line-height:1.25;
+  border-radius:14px;padding:11px 14px;box-shadow:var(--key);min-height:48px;
+  opacity:0;transform:translateY(18px) rotateX(40deg) scale(.9);transition:transform .25s}
+.node small{display:block;font-weight:500;font-size:12.5px;opacity:.85}
+.flow.in .node{animation:pop .55s cubic-bezier(.2,.9,.3,1.3) forwards;animation-delay:calc(var(--i)*90ms)}
+@keyframes pop{to{opacity:1;transform:none}}
+.node:hover{transform:translateY(-4px) scale(1.04)!important}
+.node.root{background:linear-gradient(160deg,#FFFFFF,#D8D2C2);color:#000;box-shadow:0 6px 0 #6b665a,0 14px 26px -8px rgba(255,255,255,.2);font-size:17px}
+.node.navy{background:linear-gradient(160deg,#2B2B2B,#121212);color:#fff;border:1px solid var(--gold);box-shadow:0 6px 0 #000,0 14px 26px -8px rgba(245,184,46,.2)}
+.node.navy small{color:var(--muted);opacity:1}
+.node.green{background:linear-gradient(160deg,#6EE7B7,#10B981);color:#022c1d;box-shadow:0 6px 0 #065F46,0 12px 24px -8px rgba(16,185,129,.3)}
+.node.red{background:linear-gradient(160deg,#FCA5A5,#EF4444);color:#2b0505;box-shadow:0 6px 0 #7F1D1D,0 12px 24px -8px rgba(239,68,68,.3)}
+
+.chain{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 4px}
+.arr{width:34px;height:4px;border-radius:4px;position:relative;flex:none;
+  background:repeating-linear-gradient(90deg,var(--gold) 0 8px,transparent 8px 13px);background-size:26px 4px;animation:dash 1s linear infinite}
+.arr::after{content:"";position:absolute;right:-4px;top:-5px;border:7px solid transparent;border-left:9px solid var(--gold);border-right:0}
+.sep{font-family:var(--display);font-weight:800;font-size:26px;color:var(--gold);padding:0 4px}
+@keyframes dash{to{background-position:26px 0}}
+@media (max-width:640px){
+  .chain.v{flex-direction:column}
+  .chain.v .arr{width:4px;height:26px;background:repeating-linear-gradient(180deg,var(--gold) 0 8px,transparent 8px 13px);background-size:4px 26px;animation:dashv 1s linear infinite}
+  .chain.v .arr::after{right:-5px;top:auto;bottom:-6px;border:7px solid transparent;border-top:9px solid var(--gold);border-bottom:0}
+  .chain.v .node{width:min(100%,320px)}
+}
+@keyframes dashv{to{background-position:0 26px}}
+
+.tree{display:flex;flex-direction:column;align-items:center}
+.tree .stem{width:3px;height:24px;background:var(--gold);border-radius:4px}
+.tree .kids{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:26px 12px;width:100%;position:relative;padding-top:18px;border-top:3px solid var(--gold);border-radius:6px}
+.tree .kid{display:flex;flex-direction:column;align-items:center;position:relative}
+.tree .kid::before{content:"";width:3px;height:18px;background:var(--gold);position:absolute;top:-18px;border-radius:4px}
+.tree .kid .node{width:100%}
+.tree .kid ul{list-style:none;padding:0;margin:10px 0 0;width:100%;font-size:14px}
+.tree .kid li{background:#111;border:1px solid var(--line);border-radius:10px;padding:6px 10px;margin:6px 0;text-align:center}
+
+.cycle{position:relative;width:min(100%,520px);aspect-ratio:1;margin:0 auto}
+.cycle svg.ring-svg{position:absolute;inset:14%;width:72%;height:72%;animation:rot 40s linear infinite}
+.cycle .center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:30%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;text-align:center;
+  background:radial-gradient(circle at 35% 30%,#2e2e2e,#000);color:var(--gold);border:2px solid var(--gold);font-family:var(--display);font-weight:800;font-size:clamp(13px,2.6vw,18px);padding:8px;
+  box-shadow:0 0 0 6px rgba(245,184,46,.08),0 0 40px rgba(245,184,46,.3)}
+.cycle .node{position:absolute;width:30%;font-size:clamp(11.5px,2.4vw,14.5px);padding:8px 6px;translate:-50% -50%}
+
+.pyr{display:flex;flex-direction:column;align-items:center;gap:8px}
+.pyr .node{width:var(--w);border-radius:10px}
+
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.duo .col{background:#0d0d0d;border:1px solid var(--line);border-radius:16px;padding:14px}
+.duo .col .node{width:100%;margin-bottom:10px}
+.duo .col ul{list-style:none;padding:0;margin:0}
+.duo .col li{padding:7px 10px;border-radius:10px;background:#151515;margin:6px 0;font-size:15px;border:1px solid var(--line)}
+@media (max-width:640px){.duo{grid-template-columns:1fr}}
+
+/* Notes */
+.notes{columns:3 300px;column-gap:16px}
+.note{break-inside:avoid;background:linear-gradient(170deg,#151515,#0a0a0a);border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:18px;padding:16px 18px;margin:0 0 16px;box-shadow:var(--shadow)}
+.note h3{font-size:18px;margin:4px 0 8px;color:var(--gold)}
+.note ul{margin:0;padding-left:18px;font-size:15px}
+.note li{margin:3px 0}
+.note li::marker{color:var(--gold)}
+
+/* Questions */
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:#111;color:var(--ink);border-radius:999px;padding:7px 14px;font-weight:600;font-size:14px}
+.chip[aria-pressed="true"]{background:var(--gold);color:var(--onGold);border-color:var(--gold)}
+.qlist{display:grid;gap:12px;margin-top:18px}
+details.q{background:var(--card);border:1px solid var(--line);border-radius:16px}
+details.q[open]{border-color:rgba(245,184,46,.5)}
+details.q summary{list-style:none;cursor:pointer;padding:14px 18px;display:flex;gap:12px;align-items:flex-start;font-weight:600}
+details.q summary::-webkit-details-marker{display:none}
+details.q summary .tag{flex:none;font-size:12px;font-weight:700;border-radius:8px;padding:3px 8px;background:#1f1f1f;color:var(--ink);border:1px solid var(--line);margin-top:2px}
+details.q summary .tag.long{background:rgba(245,184,46,.14);color:var(--gold);border-color:rgba(245,184,46,.4)}
+details.q summary::after{content:"+";margin-left:auto;font-size:22px;line-height:1;color:var(--gold);transition:transform .2s}
+details.q[open] summary::after{transform:rotate(45deg)}
+details.q .ans{padding:0 18px 16px 18px;border-top:1px dashed var(--line);font-size:15.5px;color:#DDD7C8}
+details.q .ans ul{padding-left:20px}
+
+/* Quiz */
+.quiz{background:linear-gradient(170deg,#151515,#070707);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:24px;max-width:760px;margin:0 auto;perspective:900px}
+.qcard{transform-style:preserve-3d;animation:flipin .45s ease}
+@keyframes flipin{from{transform:rotateY(-70deg);opacity:0}to{transform:none;opacity:1}}
+.qmeta{display:flex;justify-content:space-between;color:var(--muted);font-size:14px;font-weight:600;margin-bottom:8px}
+.qbar{height:8px;border-radius:9px;background:#222;overflow:hidden;margin-bottom:18px}
+.qbar i{display:block;height:100%;background:var(--gold);transition:width .3s}
+.qtext{font-family:var(--display);font-weight:700;font-size:21px;margin-bottom:14px;color:#fff}
+.opt{display:block;width:100%;text-align:left;border:2px solid var(--line);background:#111;color:var(--ink);border-radius:14px;padding:12px 16px;margin:8px 0;font-weight:500;font-size:16px}
+.opt:hover:not(:disabled){border-color:var(--gold)}
+.opt.right{border-color:var(--green);background:rgba(52,211,153,.12)}
+.opt.wrong{border-color:var(--red);background:rgba(248,113,113,.12)}
+.qexp{margin-top:10px;padding:10px 14px;border-radius:12px;background:#1a1a1a;font-size:15px}
+.qnav{display:flex;justify-content:flex-end;margin-top:16px;gap:10px}
+
+footer{padding:40px 0 60px;text-align:center;color:var(--muted);border-top:1px solid var(--line)}
+footer strong{color:var(--gold);font-family:var(--display);font-size:20px}
+.totop{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:40;width:48px;height:48px;border-radius:14px;border:0;background:var(--gold);color:var(--onGold);font-size:22px;box-shadow:0 5px 0 var(--goldDeep);opacity:0;pointer-events:none;transition:opacity .2s}
+.totop.show{opacity:1;pointer-events:auto}
+
+@media (max-width:860px){
+  .hero .wrap{grid-template-columns:1fr}
+  .stage{min-height:300px}
+  .cube{--s:150px}
+  .face{font-size:19px}
+  .face .ic{font-size:30px}
+}
+@media (max-width:560px){
+  body{font-size:16px}
+  .panes{padding:18px 14px 20px}
+  .tabs{padding:12px 14px 0}
+  .topic-head{padding:18px 14px}
+  .brand span{display:none}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}
+  .node{opacity:1;transform:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<div id="splash" role="dialog" aria-label="Welcome">
+  <div class="splash-in">
+    <div class="splash-emoji" aria-hidden="true">😊</div>
+    <div class="splash-small">Made by</div>
+    <h1 class="splash-name" id="splashName">Shivam Yadav</h1>
+    <div class="splash-bar"><i></i></div>
+    <div class="splash-link">shivamyadav.in</div>
+    <div class="splash-skip">Tap anywhere to start studying</div>
+  </div>
+</div>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#top"><b>📊</b><span>EBM · MTE Prep</span></a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#topics">Topics</a>
+      <a href="#notes">Short notes</a>
+      <a href="#questions">Exam questions</a>
+      <a href="#quiz">Quiz</a>
+      <a href="https://shivamyadav.in" target="_blank" rel="noopener" class="port">My portfolio ↗</a>
+    </nav>
+  </div>
+  <div class="scrollbar" id="scrollbar"></div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <h1>Management,<span class="l2">one flowchart at a time.</span></h1>
+        <p class="lead">Everything from your EBM syllabus (Topics 1–12) turned into animated flowcharts, clear theory, one-page short notes and the questions most likely to show up in tomorrow's MTE.</p>
+        <div class="hero-actions">
+          <a class="btn" href="#topics">Start with Topic 1</a>
+          <a class="btn ghost" href="#notes">Revise short notes</a>
+          <a class="btn ghost" href="#quiz">Test yourself</a>
+        </div>
+        <div class="progress-card">
+          <div class="ring" id="ring"><span id="ringTxt">0%</span></div>
+          <div><strong id="progTxt">0 of 0 topics studied</strong><small>Press “Mark as studied” on each topic. Your progress stays on this device.</small></div>
+        </div>
+      </div>
+      <div class="stage" aria-label="Rotating cube showing the functions of management">
+        <svg class="gear g1" viewBox="0 0 100 100" aria-hidden="true"><path fill="currentColor" d="M43 5h14l2 12 8 3 10-7 10 10-7 10 3 8 12 2v14l-12 2-3 8 7 10-10 10-10-7-8 3-2 12H43l-2-12-8-3-10 7-10-10 7-10-3-8-12-2V43l12-2 3-8-7-10 10-10 10 7 8-3zM50 34a16 16 0 100 32 16 16 0 000-32z"/></svg>
+        <svg class="gear g2" viewBox="0 0 100 100" aria-hidden="true"><path fill="currentColor" d="M43 5h14l2 12 8 3 10-7 10 10-7 10 3 8 12 2v14l-12 2-3 8 7 10-10 10-10-7-8 3-2 12H43l-2-12-8-3-10 7-10-10 7-10-3-8-12-2V43l12-2 3-8-7-10 10-10 10 7 8-3zM50 34a16 16 0 100 32 16 16 0 000-32z"/></svg>
+        <div class="cube">
+          <div class="face f1"><div><div class="ic">🗺️</div>Planning<em>decide in advance</em></div></div>
+          <div class="face f2"><div><div class="ic">🧩</div>Organizing<em>arrange resources</em></div></div>
+          <div class="face f3"><div><div class="ic">👥</div>Staffing<em>right people</em></div></div>
+          <div class="face f4"><div><div class="ic">📣</div>Directing<em>lead &amp; motivate</em></div></div>
+          <div class="face f5"><div><div class="ic">🔗</div>Coordination<em>essence of management</em></div></div>
+          <div class="face f6"><div><div class="ic">🎯</div>Controlling<em>check &amp; correct</em></div></div>
+        </div>
+        <div class="shadow-floor"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="topics">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><h2>Syllabus map</h2><p>Tap any topic to jump to it. Topics tagged “often asked” are the classic MTE favourites, so do those first if time is short.</p></div>
+      </div>
+      <div class="index" id="index"></div>
+    </div>
+  </section>
+
+  <section class="block" style="padding-top:0">
+    <div class="wrap" id="topicPanels"></div>
+  </section>
+
+  <section class="block" id="notes">
+    <div class="wrap">
+      <div class="sec-head"><div><h2>Short notes</h2><p>The whole syllabus on sticky notes. Read these twice tonight and once before the exam.</p></div></div>
+      <div class="notes" id="notesGrid"></div>
+    </div>
+  </section>
+
+  <section class="block" id="questions">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><h2>Likely exam questions</h2><p>Open a question to see the points your answer must contain. Long answers: write intro → definition → points with headings → flowchart/diagram → conclusion.</p></div>
+        <div class="filters" id="qFilters">
+          <button class="chip" aria-pressed="true" data-f="all">All</button>
+          <button class="chip" aria-pressed="false" data-f="short">Short (2–3 marks)</button>
+          <button class="chip" aria-pressed="false" data-f="long">Long (5–10 marks)</button>
+        </div>
+      </div>
+      <div class="qlist" id="qlist"></div>
+    </div>
+  </section>
+
+  <section class="block" id="quiz">
+    <div class="wrap">
+      <div class="sec-head" style="justify-content:center;text-align:center"><div><h2>Quick self-test</h2><p style="margin-inline:auto">25 MCQs across the syllabus. Check what stuck.</p></div></div>
+      <div class="quiz" id="quizBox"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div style="font-size:40px">😊</div>
+  <strong>Made by Shivam Yadav</strong>
+  <p><a class="btn" href="https://shivamyadav.in" target="_blank" rel="noopener">Visit my portfolio: shivamyadav.in</a></p>
+  <p>Based on EBM study material, Topics 1–12. All the best for your MTE!</p>
+</footer>
+<button class="totop" id="totop" aria-label="Back to top">↑</button>
+<script>
+const TOPICS = [
+{
+ id:"t1", n:"1", icon:"🏢", title:"Introduction to Management", sub:"Meaning, definitions, functions, levels", hot:true,
+ flows:[
+  {type:"cycle", title:"The 4 basic functions of management (a continuous cycle)", center:"Management", items:[
+    {t:"Planning",s:"what, how, when"},{t:"Organizing",s:"arrange resources"},{t:"Directing / Leading",s:"guide & motivate"},{t:"Controlling",s:"monitor & correct"}]},
+  {type:"chain", v:true, title:"Levels of management (top to bottom)", items:[
+    {t:"Top level",s:"Board, CEO: goals, policies, strategy",c:"navy"},{t:"Middle level",s:"Dept heads: implement plans",},{t:"Bottom level",s:"Supervisors: day-to-day work",c:"green"}]},
+  {type:"tree", title:"Three ways the term “management” is used", root:"Management", kids:[
+    {t:"As a Discipline",list:["Field of study","Both art & science"]},
+    {t:"As a Group of People",list:["All who do managerial work","Management vs labour"]},
+    {t:"As a Process",list:["Planning → Controlling","Dynamic, continuous, flexible"],c:"green"}]}
+ ],
+ theory:`
+<h3>Meaning</h3>
+<p>Management is the process of <b>planning, organizing, directing and controlling</b> resources to achieve goals <b>effectively and efficiently</b>. It coordinates the work of individuals and groups so they move towards a common purpose. It is needed in every organization: business, non-profit, government or school.</p>
+<div class="def"><b>Simple definition to write in exam:</b> “Management is the process of getting things done through and with others in an organization.”</div>
+<h3>Four famous definitions</h3>
+<div class="scroll-x"><table><tr><th>Type</th><th>Definition</th><th>Given by</th></tr>
+<tr><td>People-oriented</td><td>Accomplishment of results through the efforts of other people.</td><td>Lawrence Appley</td></tr>
+<tr><td>Efficiency / Production</td><td>Art of knowing what you want to do and then seeing that it is done in the best and cheapest way.</td><td>F.W. Taylor</td></tr>
+<tr><td>Decision-oriented</td><td>Process of decision making and control over human action to attain predetermined goals.</td><td>Stanley Vance</td></tr>
+<tr><td>Function-oriented</td><td>Process by which managers create, direct, maintain and operate purposive organisations through systematic, coordinated, cooperative human effort.</td><td>McFarland</td></tr></table></div>
+<h3>Key functions</h3>
+<ol><li><b>Planning:</b> set objectives and decide what, how and when things will be done.</li>
+<li><b>Organizing:</b> arrange people, money, technology and materials so goals can be met.</li>
+<li><b>Directing:</b> lead, guide, communicate and motivate employees.</li>
+<li><b>Controlling:</b> compare actual progress with plans and take corrective action.</li></ol>
+<h3>Levels of management</h3>
+<ol><li><b>Top level:</b> sets goals, policies, strategic decisions.</li><li><b>Middle level:</b> implements top-level plans, coordinates lower levels.</li><li><b>Bottom (supervisory/frontline):</b> oversees workers and daily operations.</li></ol>
+<h3>Why is management hard to define?</h3>
+<p>It borrowed ideas from <b>economics, sociology, psychology and anthropology</b>, so each group sees it differently: economists call it a <b>factor of production</b>, sociologists a <b>class of persons</b>, practitioners a <b>process of activities</b>. So the term is used in three ways: as a <b>discipline</b> (art + science), as a <b>group of people</b>, and as a <b>process</b>.</p>
+<h3>Operational vs managerial activities</h3>
+<p><b>Operational</b> = actual work (worker handling a machine, putting material into godown). <b>Managerial</b> = getting work done (supervisor instructing a worker, marketing manager instructing salesmen).</p>
+<div class="mnemo">Functions = <b>POSDC</b>: “<b>P</b>lease <b>O</b>rganise <b>S</b>ome <b>D</b>elicious <b>C</b>ake” (Planning, Organizing, Staffing, Directing, Controlling).</div>`,
+ notes:["Management = getting things done through & with others","Functions: Planning, Organizing, Directing, Controlling (+Staffing)","Definitions: Appley (people), Taylor (best & cheapest way), Vance (decision), McFarland (function)","Levels: Top → Middle → Bottom (supervisory)","Used as: Discipline, Group of people, Process","Operational activity = doing; Managerial = getting it done"]
+},
+{
+ id:"t2", n:"2", icon:"🧭", title:"Features of Management", sub:"17 practical characteristics", hot:false,
+ flows:[
+  {type:"tree", title:"Features of management at a glance", root:"Features of Management", kids:[
+    {t:"Purpose",list:["Goal-oriented","Future-oriented","Short & long-term balance"]},
+    {t:"Process",list:["Continuous process","Multidimensional function","Decision-making","Problem-solving"],c:"navy"},
+    {t:"People",list:["Interpersonal skills","Coordination","Hierarchy","Authority & responsibility"],c:"green"},
+    {t:"Performance",list:["Efficiency & effectiveness","Optimum use of resources","Integrative force"]},
+    {t:"Mindset",list:["Adaptability","Contingency approach","Ethical considerations"],c:"navy"}]}
+ ],
+ theory:`
+<p>Features are the <b>specific, practical, observable</b> characteristics that describe how management works in real life.</p>
+<ol>
+<li><b>Goal-oriented:</b> aims at clear, attainable targets linked to mission and vision.</li>
+<li><b>Multidimensional function:</b> planning, organizing, staffing, directing, controlling.</li>
+<li><b>Continuous process:</b> never-ending cycle of plan → execute → evaluate → refine.</li>
+<li><b>Integrative force:</b> brings human, financial, material and technological resources together.</li>
+<li><b>Decision-making:</b> analyse information, compare alternatives, choose the best.</li>
+<li><b>Interpersonal skills:</b> communicate, motivate and lead people.</li>
+<li><b>Adaptability:</b> respond to internal and external change.</li>
+<li><b>Efficiency and effectiveness:</b> optimal use of resources + achieving objectives.</li>
+<li><b>Coordination:</b> synchronises departments and individuals.</li>
+<li><b>Hierarchy:</b> levels of authority and responsibility.</li>
+<li><b>Authority and responsibility:</b> power to decide + accountability for results.</li>
+<li><b>Optimum utilization of resources:</b> maximum productivity, minimum waste.</li>
+<li><b>Problem-solving:</b> identify and solve issues promptly.</li>
+<li><b>Future-oriented:</b> long-term planning and strategy.</li>
+<li><b>Contingency approach:</b> choose the approach that suits the situation.</li>
+<li><b>Balance of short-term and long-term goals.</b></li>
+<li><b>Ethical considerations:</b> impact on stakeholders and society.</li></ol>
+<div class="mnemo">Group the 17 into <b>5 P’s</b>: Purpose, Process, People, Performance, Mindset (see flowchart). Write 8–10 points in the exam with one line each.</div>`,
+ notes:["Features = concrete, practical, observable traits","Goal-oriented, continuous, multidimensional","Integrative force, coordination, hierarchy","Authority + responsibility go together","Efficiency (resources) + effectiveness (goals)","Adaptable, contingency-based, ethical, future-oriented"]
+},
+{
+ id:"t3", n:"3", icon:"🔬", title:"Nature of Management", sub:"Fundamental character + features vs nature", hot:true,
+ flows:[
+  {type:"cycle", title:"Nature of management", center:"Nature", items:[
+    {t:"Goal-oriented"},{t:"Universal"},{t:"Continuous"},{t:"Inter-disciplinary"},{t:"Dynamic"},{t:"Human-centred"},{t:"Decision-making"},{t:"Leadership & delegation"}]},
+  {type:"duo", title:"Features vs Nature", a:{t:"Nature",c:"navy",list:["Fundamental principles","Abstract & theoretical","WHY / how management operates","Universality, dynamic nature"]}, b:{t:"Features",list:["Specific, tangible attributes","Concrete & practical","HOW managers work day-to-day","Hierarchy, authority, problem-solving"]}}
+ ],
+ theory:`
+<p>Nature means the <b>fundamental characteristics and principles</b> that define management. It is multidimensional and dynamic.</p>
+<ol>
+<li><b>Goal-oriented:</b> profit, growth, market share, customer satisfaction, social responsibility.</li>
+<li><b>Universal application:</b> applies to business, non-profit, government, education.</li>
+<li><b>Continuous process:</b> interrelated functions repeated over time.</li>
+<li><b>Decision-making:</b> strategic, tactical and operational decisions.</li>
+<li><b>Interdisciplinary:</b> draws from economics, psychology, sociology, accounting, finance.</li>
+<li><b>Dynamic and adaptive:</b> responds to a changing environment.</li>
+<li><b>Human-centred:</b> mainly about people: employees and customers.</li>
+<li><b>Efficiency &amp; effectiveness:</b> <i>efficiency = doing things right</i>; <i>effectiveness = doing the right things</i>.</li>
+<li><b>Coordination</b> of individuals and departments.</li>
+<li><b>Ethical responsibilities:</b> social and environmental.</li>
+<li><b>Delegation</b> of authority to subordinates.</li>
+<li><b>Leadership:</b> inspire and guide.</li>
+<li><b>Risk management:</b> identify and manage risks.</li></ol>
+<h3>Management: art or science?</h3>
+<p>It is <b>both</b>. It is a science because it has organised principles (cause–effect); it is an art because applying those principles needs personal skill, creativity and experience.</p>
+<h3>Features vs Nature (common 5-mark question)</h3>
+<div class="scroll-x"><table><tr><th>Basis</th><th>Nature of management</th><th>Features of management</th></tr>
+<tr><td>Meaning</td><td>Fundamental characteristics &amp; principles</td><td>Specific, tangible attributes</td></tr>
+<tr><td>Type</td><td>Abstract, theoretical</td><td>Concrete, practical</td></tr>
+<tr><td>Explains</td><td>How management functions and operates at its core</td><td>How managers actually carry out tasks</td></tr>
+<tr><td>Examples</td><td>Universality, continuous &amp; dynamic nature, purpose</td><td>Hierarchy, authority, problem-solving, adaptability</td></tr></table></div>
+<div class="mnemo">Efficiency = doing things <b>right</b> (resources). Effectiveness = doing the <b>right</b> things (goals).</div>`,
+ notes:["Nature = fundamental, abstract, theoretical","Universal, continuous, dynamic, interdisciplinary","Human-centred; involves delegation & leadership","Efficiency = doing things right; Effectiveness = doing right things","Management is both art & science","Features = concrete/practical vs Nature = abstract/theoretical"]
+},
+{
+ id:"t4", n:"4A", icon:"🕰️", title:"Evolution of Management Thought", sub:"From early practices to modern approaches", hot:false,
+ flows:[
+  {type:"chain", v:true, title:"Timeline of management thought", items:[
+    {t:"Early contributions",s:"up to 19th century",c:"navy"},{t:"Scientific mgmt",s:"1900–1930 (Taylor)"},{t:"Administrative",s:"1916–1940 (Fayol)"},{t:"Human relations",s:"1930–1950 (Mayo)"},{t:"Social systems",s:"1940–1950"},{t:"Decision theory",s:"1945–1965"},{t:"Management science",s:"1950–1960"},{t:"Human behaviour",s:"1950–1970"},{t:"Systems approach",s:"1960s onwards"},{t:"Contingency",s:"1970s onwards",c:"green"}]}
+ ],
+ theory:`
+<h3>Evolution of management thought (table)</h3>
+<div class="scroll-x"><table><tr><th>#</th><th>Management thought</th><th>Period</th></tr>
+<tr><td>1</td><td>Early contributions</td><td>Up to 19th century</td></tr><tr><td>2</td><td>Scientific management</td><td>1900–1930</td></tr><tr><td>3</td><td>Administrative / operational management</td><td>1916–1940</td></tr><tr><td>4</td><td>Human relations approach</td><td>1930–1950</td></tr><tr><td>5</td><td>Social systems approach</td><td>1940–1950</td></tr><tr><td>6</td><td>Decision theory approach</td><td>1945–1965</td></tr><tr><td>7</td><td>Management science approach</td><td>1950–1960</td></tr><tr><td>8</td><td>Human behaviour approach</td><td>1950–1970</td></tr><tr><td>9</td><td>Systems approach</td><td>1960s onwards</td></tr><tr><td>10</td><td>Contingency approach</td><td>1970s onwards</td></tr></table></div>
+<h3>Key stages explained</h3>
+<ol>
+<li><b>Early practices:</b> Egypt, Greece, Rome used basic management to organise labour, but no formal theory.</li>
+<li><b>Classical theory (late 19th–early 20th c.):</b>
+<ul><li><b>Scientific management</b> by <b>F.W. Taylor</b> (father of scientific management): time &amp; motion study, standardisation, incentives, efficiency at shop-floor.</li>
+<li><b>Administrative management</b> by <b>Henri Fayol</b>: role of managers; 5 functions: planning, organizing, commanding, coordinating, controlling.</li></ul></li>
+<li><b>Human relations movement:</b> reaction to Taylor ignoring humans. <b>Elton Mayo</b>'s studies (Hawthorne) showed social and psychological factors affect productivity and morale.</li>
+<li><b>Quantitative approach:</b> maths, statistics, operations research for decisions and resource allocation.</li>
+<li><b>Contingency theory:</b> no one best way; it depends on the situation. <b>Fred Fiedler, Joan Woodward</b>.</li>
+<li><b>Modern management:</b> combines all earlier ideas: TQM, Six Sigma, Lean, Agile; focus on continuous improvement and customers.</li></ol>`,
+ notes:["Early → Classical (Taylor + Fayol) → Human relations (Mayo) → Quantitative → Contingency → Modern","Scientific mgmt 1900–30; Administrative 1916–40","Human relations 1930–50; Systems 1960s; Contingency 1970s","Contingency: Fiedler & Woodward: ‘it depends’","Modern: TQM, Six Sigma, Lean, Agile"]
+},
+{
+ id:"t4b", n:"4B", icon:"⚙️", title:"Taylor's Scientific Management", sub:"Elements, tools, principles, criticism", hot:true,
+ flows:[
+  {type:"tree", title:"Functional foremanship: 8 foremen", root:"Factory Manager", kids:[
+    {t:"Planning incharge (office)",c:"navy",list:["Route clerk","Instruction card clerk","Time & cost clerk","Disciplinarian"]},
+    {t:"Production incharge (shop floor)",c:"green",list:["Speed boss","Inspector","Maintenance foreman","Gang boss"]}]},
+  {type:"chain", title:"Job analysis = 3 studies to find the “one best way”", items:[{t:"Motion study",s:"remove useless movements"},{t:"Time study",s:"standard time per task"},{t:"Fatigue study",s:"rest intervals"},{t:"Fair day's work",c:"root"}]},
+  {type:"tree", title:"5 principles of scientific management", root:"Taylor's Principles", kids:[
+    {t:"Science, not rule of thumb"},{t:"Harmony, not discord"},{t:"Cooperation, not individualism"},{t:"Maximum, not restricted output"},{t:"Development of every worker",c:"green"}]}
+ ],
+ theory:`
+<p><b>Frederick Winslow Taylor</b> (1856–1915, USA) worked at <b>Midvale Steel</b> and <b>Bethlehem Steel</b>. Followers: Frank &amp; Lillian Gilbreth, Henry Gantt. He is the <b>father of scientific management</b>. Focus: <b>operational efficiency at the shop-floor level</b>.</p>
+<div class="def"><b>Taylor's definition:</b> Scientific management is knowing exactly what you want men to do and then seeing that they do it in the best and cheapest way.</div>
+<h3>I. Elements and tools (8)</h3>
+<ol>
+<li><b>Separation of planning and doing:</b> earlier the worker planned his own work under a “gang boss”. Taylor said planning goes to supervisors; workers only do.</li>
+<li><b>Functional foremanship:</b> 8 specialist foremen instead of one boss.
+ <ul><li><b>Planning (4):</b> route clerk (path of material), instruction card clerk (how to do job), time &amp; cost clerk (time &amp; cost records), disciplinarian (discipline, absenteeism).</li>
+ <li><b>Doing (4):</b> speed boss (correct speed), inspector (quality), maintenance foreman (machines), gang boss (workers &amp; resources on floor).</li></ul></li>
+<li><b>Job analysis:</b> find the one best way via <b>motion study</b> (cut wasteful movements), <b>time study</b> (standard time), <b>fatigue study</b> (rest needed). Gives a <b>fair day's work</b>.</li>
+<li><b>Standardization</b> of tools, working conditions, time, cost, amount of work.</li>
+<li><b>Scientific selection and training</b> of workers by education, aptitude, strength.</li>
+<li><b>Financial incentives:</b> <b>differential piece-rate system</b>: higher rate per piece to workers who reach the standard, lower rate to those who don't.</li>
+<li><b>Economy:</b> cost estimates and control, eliminate wastage.</li>
+<li><b>Mental revolution:</b> both management and workers change from conflict to cooperation. <b>Taylor called this the most important feature.</b></li></ol>
+<h3>II. Principles (5)</h3>
+<ol>
+<li><b>Science, not rule of thumb:</b> measure precisely instead of estimating.</li>
+<li><b>Harmony, not discord</b> in group action.</li>
+<li><b>Cooperation, not individualism:</b> mutual confidence and goodwill.</li>
+<li><b>Maximum output, not restricted output:</b> increase the size of the cake (surplus) rather than fight over its division.</li>
+<li><b>Development of workers</b> to their greatest efficiency and prosperity.</li></ol>
+<h3>Limitations / criticism (7)</h3>
+<ol>
+<li><b>Exploitative:</b> productivity rose but benefits weren't shared with workers.</li>
+<li><b>Depersonalised work:</b> repetitive, boring; workers became “machine tools”.</li>
+<li><b>Un-psychological:</b> no clear basis for wage or efficiency measurement; “first class men” idea.</li>
+<li><b>Undemocratic</b> (Peter Drucker): managers plan, workers only obey.</li>
+<li><b>Anti-social</b> (Dr. C.S. Myers): excludes the average worker.</li>
+<li><b>Unoriginal</b> (Hoagland): ideas overrated; Bethlehem report questioned.</li>
+<li><b>Unrealistic:</b> assumes money is the only motivator; ignores social &amp; ego needs.</li></ol>
+<p><b>Still a hero because</b> he first advocated planning, scientific selection, right man for right job, fair rewards, and turned management thinking into principles.</p>
+<div class="mnemo">Planning foremen = <b>R I T D</b> (“Rahul Is Top Dog”); Doing foremen = <b>S I M G</b> (“Sachin Is My God”). Principles = <b>S H C M D</b>: “Scientists Hate Chaos, Maximise Development”.</div>`,
+ notes:["F.W. Taylor (1856–1915), father of scientific mgmt; Midvale & Bethlehem Steel","Focus: shop-floor efficiency, ‘best & cheapest way’","8 elements: separation of planning & doing, functional foremanship, job analysis, standardisation, scientific selection, differential piece rate, economy, mental revolution (most important)","8 foremen: Route clerk, Instruction card clerk, Time & cost clerk, Disciplinarian | Speed boss, Inspector, Maintenance foreman, Gang boss","Job analysis = motion + time + fatigue study","5 principles: Science, Harmony, Cooperation, Max output, Development","Criticism: exploitative, depersonalised, undemocratic (Drucker), anti-social (Myers), unoriginal (Hoagland), unrealistic"]
+},
+{
+ id:"t4c", n:"4C", icon:"🎩", title:"Fayol's Administrative Management", sub:"Qualities, 14 principles, elements, POSDCORB", hot:true,
+ flows:[
+  {type:"tree", title:"Fayol's approach has 3 parts", root:"Henri Fayol", kids:[
+    {t:"Managerial qualities (6)",list:["Physical","Mental","Moral","Educational","Technical","Experience"]},
+    {t:"14 Principles",c:"navy",list:["Division of work → Esprit de corps"]},
+    {t:"Elements (5)",c:"green",list:["Planning","Organizing","Commanding","Coordinating","Controlling"]}]},
+  {type:"tree", title:"Fayol's 14 principles of management", root:"14 Principles", kids:[
+    {t:"1. Division of work"},{t:"2. Authority & responsibility",c:"navy"},{t:"3. Discipline"},{t:"4. Unity of command",c:"green"},{t:"5. Unity of direction",c:"green"},{t:"6. Subordination of individual interest",c:"navy"},{t:"7. Remuneration"},{t:"8. Centralization"},{t:"9. Scalar chain",c:"navy"},{t:"10. Order"},{t:"11. Equity"},{t:"12. Stability of tenure",c:"navy"},{t:"13. Initiative"},{t:"14. Esprit de corps",c:"green"}]},
+  {type:"chain", title:"Scalar chain with gang plank (F talks to P directly)", items:[{t:"F",c:"navy"},{t:"E → D → C → B",s:"up the chain"},{t:"A",s:"top man",c:"root"},{t:"L → M → N → O",s:"down the chain"},{t:"P",c:"navy"}]},
+  {type:"chain", title:"POSDCORB by Luther Gulick", items:[{t:"P",s:"Planning"},{t:"O",s:"Organizing"},{t:"S",s:"Staffing"},{t:"D",s:"Directing"},{t:"Co",s:"Coordinating"},{t:"R",s:"Reporting"},{t:"B",s:"Budgeting"}]}
+ ],
+ theory:`
+<p><b>Henri Fayol</b>, a French industrialist, is the <b>father of modern (operational) management theory</b>. Book: <i>Administration Industrielle et Générale</i> (French, 1916; English 1929, widely in USA 1949). He viewed management from the <b>top management</b> point of view and used the word <b>“administration”</b>, which he said is <b>universal</b>: business, religion, state, all alike.</p>
+<h3>I. Managerial qualities (6)</h3>
+<p><b>Physical</b> (health, vigour), <b>Mental</b> (judgement, learning), <b>Moral</b> (firmness, loyalty, initiative, dignity), <b>Educational</b> (general knowledge), <b>Technical</b> (of the function), <b>Experience</b>. Technical ability matters most for workers; managerial ability matters more as you go up the scalar chain. So management should be <b>taught</b> in schools.</p>
+<h3>II. 14 principles</h3>
+<p>Principle = fundamental truth with cause–effect; element = function a manager performs. Principles are <b>flexible, not rigid</b>, and the list is <b>suggestive, not exhaustive</b>.</p>
+<ol>
+<li><b>Division of work:</b> specialisation increases output.</li>
+<li><b>Authority &amp; responsibility:</b> must be in parity; authority = official (position) + personal (qualities).</li>
+<li><b>Discipline:</b> obedience and respect; self-imposed or command discipline.</li>
+<li><b>Unity of command:</b> one employee, <b>one boss</b> (opposite of Taylor's functional foremanship).</li>
+<li><b>Unity of direction:</b> one head and <b>one plan</b> for activities with the same objective.</li>
+<li><b>Subordination of individual interest to general interest.</b></li>
+<li><b>Remuneration:</b> fair pay satisfying both sides.</li>
+<li><b>Centralization:</b> degree is a question of proportion.</li>
+<li><b>Scalar chain:</b> line of authority top to bottom; <b>gang plank</b> allows direct contact between same-level employees (F and P) with superiors informed.</li>
+<li><b>Order:</b> a place for everything, right man in right place.</li>
+<li><b>Equity:</b> justice + kindness.</li>
+<li><b>Stability of tenure:</b> avoid high turnover.</li>
+<li><b>Initiative:</b> encourage employees to think and act.</li>
+<li><b>Esprit de corps:</b> “union is strength”: team spirit.</li></ol>
+<h3>III. Elements (5 functions)</h3>
+<p>Planning (most important), Organizing, Commanding, Coordinating, Controlling. <i>“To manage is to forecast and plan, to organise, to command, to coordinate and to control.”</i></p>
+<h3>Other function lists</h3>
+<p><b>Luther Gulick: POSDCORB</b>: Planning, Organizing, Staffing, Directing, Coordinating, Reporting, Budgeting.<br><b>Koontz &amp; O'Donnell</b> (most accepted): Planning, Organizing, Staffing, Directing, Controlling (+ Motivation and Coordination adopted by many managers).</p>
+<h3>Taylor vs Fayol (very common question)</h3>
+<div class="scroll-x"><table><tr><th>Basis</th><th>Taylor</th><th>Fayol</th></tr>
+<tr><td>Perspective</td><td>Shop floor / worker level (bottom-up)</td><td>Top management (top-down)</td></tr>
+<tr><td>Focus</td><td>Productivity &amp; efficiency of workers</td><td>Administration of whole organisation</td></tr>
+<tr><td>Known as</td><td>Father of scientific management</td><td>Father of modern / general management</td></tr>
+<tr><td>Command</td><td>Functional foremanship (8 bosses)</td><td>Unity of command (1 boss)</td></tr>
+<tr><td>Applicability</td><td>Mainly production / factories</td><td>Universal, all organisations</td></tr>
+<tr><td>Basis</td><td>Observation &amp; experiments</td><td>Personal experience</td></tr>
+<tr><td>Expression</td><td>Scientific management</td><td>General theory of administration</td></tr></table></div>
+<div class="mnemo">14 principles in order: <b>D A D U U S R C S O E S I E</b> → “<b>D</b>o <b>A</b>ll <b>D</b>ogs <b>U</b>nderstand <b>U</b>s? <b>S</b>ome <b>R</b>eally <b>C</b>ute <b>S</b>treet <b>O</b>nes <b>E</b>at <b>S</b>nacks <b>I</b>n <b>E</b>xcess.” Elements = <b>POCCC</b>. Qualities = <b>PMM-ETE</b>.</div>`,
+ notes:["Henri Fayol: French, father of modern management; book 1916","Top-management view; ‘administration’ is universal","6 qualities: Physical, Mental, Moral, Educational, Technical, Experience","14 principles: Division of work, Authority-responsibility, Discipline, Unity of command, Unity of direction, Subordination, Remuneration, Centralization, Scalar chain, Order, Equity, Stability of tenure, Initiative, Esprit de corps","Gang plank = shortcut in scalar chain (F↔P)","5 elements: Plan, Organise, Command, Coordinate, Control","POSDCORB = Luther Gulick; Koontz & O'Donnell = POSDC"]
+},
+{
+ id:"t5", n:"5", icon:"🔗", title:"Coordination & Functions", sub:"Coordination is the essence of management", hot:true,
+ flows:[
+  {type:"cycle", title:"Coordination touches every function", center:"Coordination", items:[{t:"Planning"},{t:"Organising"},{t:"Staffing"},{t:"Directing"},{t:"Communicating"},{t:"Motivating"},{t:"Leading"},{t:"Controlling"}]},
+  {type:"chain", title:"Koontz & O'Donnell: 5 functions of the management process", items:[{t:"Planning"},{t:"Organization"},{t:"Staffing"},{t:"Directing"},{t:"Controlling",c:"green"}]}
+ ],
+ theory:`
+<div class="def"><b>“Coordination is the essence of management.”</b> It is not a separate function; it affects every function: planning, organising, staffing, directing, communicating, motivating, leading and controlling.</div>
+<h3>Functions of management (Koontz &amp; O'Donnell)</h3>
+<ol><li><b>Planning:</b> “deciding in advance what to do, how to do it, when to do it and who is to do it.” First and foremost function.</li>
+<li><b>Organization:</b> harmonious adjustment of land, labour, capital.</li>
+<li><b>Staffing:</b> recruit, select, train, develop, appraise manpower.</li>
+<li><b>Directing:</b> supervision, guidance, inspiration of employees.</li>
+<li><b>Controlling:</b> check performance against plan and correct deviations.</li></ol>
+<p>Extra two: <b>Motivation</b> (human side; inspire best effort) and <b>Coordination</b> (lubricates all activities).</p>
+<h3>How coordination affects each function</h3>
+<ul>
+<li><b>Planning:</b> purchase, sales, production, finance plans must merge into one master plan.</li>
+<li><b>Organising:</b> top coordinates middle, middle coordinates lower, lower coordinates workers.</li>
+<li><b>Staffing:</b> recruitment, training, placement, promotion must fit together.</li>
+<li><b>Directing:</b> instructions and guidance result in coordination.</li>
+<li><b>Communicating:</b> formal, informal, upward, downward, oral, written channels must be coordinated.</li>
+<li><b>Motivating:</b> positive, negative, financial, non-financial motivation must be balanced.</li>
+<li><b>Leading:</b> a leader coordinates people, money and materials.</li>
+<li><b>Controlling:</b> set standards → measure → compare → correct: all steps coordinated.</li></ul>
+<h3>Key aspects of coordination (9)</h3>
+<p>Integration of efforts, interdepartmental collaboration, resource allocation, timely communication, conflict resolution, goal alignment, adaptability, cross-functional teams, monitoring &amp; feedback.</p>
+<h3>Need for coordination (11)</h3>
+<ol><li>Complexity of tasks</li><li>Division of labour &amp; specialisation</li><li>Interdependence of activities</li><li>Optimal resource allocation</li><li>Conflicting objectives of departments</li><li>Change and uncertainty</li><li>Communication &amp; information flow</li><li>Cross-functional collaboration</li><li>Synergy (whole &gt; sum of parts)</li><li>Avoid duplication</li><li>Better decision-making</li></ol>`,
+ notes:["Coordination = essence of management; the ‘glue’ binding all functions","Koontz & O'Donnell functions: P-O-S-D-C (+motivation, coordination)","Planning (K&O): deciding in advance what, how, when, who","Need: complexity, specialisation, interdependence, conflicting goals, change, synergy, avoid duplication","Aspects: integration, collaboration, communication, conflict resolution, goal alignment"]
+},
+{
+ id:"t6", n:"6", icon:"🏛️", title:"Centralization & Decentralization", sub:"Where is authority kept?", hot:true,
+ flows:[
+  {type:"duo", title:"Centralization vs Decentralization", a:{t:"Centralization",c:"navy",list:["Authority reserved at the top","Suits small firms, single product","Quick decisions, uniformity","Easy control & coordination","Overloads top in big firms"]}, b:{t:"Decentralization",c:"green",list:["Authority delegated systematically downward","Suits large, diversified firms","Reduces top management burden","Develops & motivates managers","Risk of chaos, higher cost"]}},
+  {type:"chain", title:"It's a spectrum, never absolute", items:[{t:"Absolute centralization",s:"not possible",c:"navy"},{t:"Balanced mix",s:"real organisations"},{t:"Absolute decentralization",s:"not possible",c:"green"}]}
+ ],
+ theory:`
+<div class="def"><b>Centralization</b> = reservation (concentration) of authority at the top level. <b>Decentralization</b> = systematic delegation (dispersion) of authority at all levels. Neither can be absolute; they are two extremes of a range.</div>
+<p><b>Functional decentralization</b> means splitting functions into separate autonomous units (production, marketing, finance).</p>
+<h3>Advantages of centralization</h3>
+<ol><li>Opportunity for personal leadership</li><li>Integration of efforts</li><li>Quick decisions: emergencies handled easily</li><li>Easy communication and control</li><li>Less wastage, no duplication</li><li>Uniform actions, easy coordination</li></ol>
+<h3>Disadvantage of centralization</h3>
+<p>Works for small, single-product, local firms. When firms grow and diversify, decisions become complex and slow, so benefits turn into limitations.</p>
+<h3>Advantages of decentralization</h3>
+<ol><li>Reduces burden on top management (focus on strategy)</li><li>Helps growth and diversification</li><li>Motivates managers</li><li>Develops managers by giving responsibility</li><li>Horizontal growth: fewer levels, wider span</li><li>Clear results for each autonomous unit</li></ol>
+<h3>Disadvantages of decentralization</h3>
+<ol><li>Chaos without proper control</li><li>Higher costs (each unit has own facilities)</li><li>Needs many good managers</li><li>Needs high self-motivation and self-control</li></ol>
+<div class="scroll-x"><table><tr><th>Basis</th><th>Centralization</th><th>Decentralization</th></tr>
+<tr><td>Authority</td><td>Kept at top</td><td>Spread to lower levels</td></tr><tr><td>Suitable for</td><td>Small organisations</td><td>Large, diversified organisations</td></tr><tr><td>Decision speed</td><td>Fast for simple, slow for complex</td><td>Fast at local level</td></tr><tr><td>Top burden</td><td>High</td><td>Low</td></tr><tr><td>Manager development</td><td>Limited</td><td>High</td></tr><tr><td>Cost</td><td>Lower</td><td>Higher</td></tr></table></div>`,
+ notes:["Centralization = authority kept at top; Decentralization = systematic delegation","Neither can be absolute; a matter of degree (Fayol)","Centralization +: personal leadership, quick decisions, uniformity, no duplication","Centralization −: unsuitable for large diversified firms","Decentralization +: less top burden, growth, motivation, manager development","Decentralization −: chaos, cost, needs good managers"]
+},
+{
+ id:"t7", n:"7", icon:"🧠", title:"Decision Making", sub:"Fundamentals of planning & the process", hot:true,
+ flows:[
+  {type:"cycle", title:"Decision-making process (with feedback)", center:"Decision Making", items:[{t:"Specific objective"},{t:"Identify problem",s:"diagnosis + analysis"},{t:"Search alternatives",s:"limiting factor"},{t:"Evaluate alternatives"},{t:"Choose alternative",s:"satisficing"},{t:"Action",s:"implement"},{t:"Result → Feedback"}]},
+  {type:"tree", title:"Ways to choose an alternative", root:"Choice", kids:[{t:"Experience",list:["Past similar problems"]},{t:"Experimentation",list:["Try & observe, e.g. test marketing"],c:"navy"},{t:"Research & analysis",list:["Break into components, measure impact"],c:"green"}]}
+ ],
+ theory:`
+<p>Word <b>“decision”</b> comes from Latin <b>“decidere”</b> = to cut off. A decision cuts away undesirable alternatives and keeps a desirable one. Decision making is at the <b>core of planning</b>: managers decide <b>what, who, when, where and how</b>.</p>
+<h3>Definitions</h3>
+<ul><li><b>Philip Kotler:</b> a conscious choice among alternative courses of action.</li>
+<li><b>Peter Drucker:</b> whatever a manager does, he does through making decisions.</li>
+<li><b>George R. Terry:</b> selection based on some criteria from two or more possible alternatives.</li>
+<li><b>Koontz &amp; O'Donnell:</b> selection from among alternatives of a course of action.</li>
+<li><b>Franklin G. Moore:</b> the blend of thinking, deciding and acting.</li>
+<li><b>McFarland:</b> an act of choice wherein an executive forms a conclusion about what must be done.</li></ul>
+<h3>Fundamentals of decision making in planning (10)</h3>
+<ol><li>Identify goals &amp; objectives</li><li>Gather information</li><li>Generate alternatives</li><li>Evaluate alternatives</li><li>Select best alternative</li><li>Allocate resources</li><li>Develop action plans</li><li>Implement &amp; monitor</li><li>Contingency planning</li><li>Communication &amp; alignment</li></ol>
+<h3>Process of decision making (7 steps)</h3>
+<ol>
+<li><b>Specific objective:</b> every decision aims at a goal; provides framework.</li>
+<li><b>Problem identification:</b> real beginning. Problem = gap between present and desired state.
+ <ul><li><b>Diagnosis:</b> like a doctor, read symptoms (e.g. high employee turnover) to find the real problem. Don't treat symptom as problem.</li>
+ <li><b>Analysis:</b> who decides, what information is needed, where it is available; criticality and time available.</li></ul></li>
+<li><b>Search for alternatives:</b> use <b>limiting factor</b> (e.g. limited finance rules out big projects); sources: experience, others' practices, creative techniques.</li>
+<li><b>Evaluation of alternatives:</b> narrow down using <b>constraints</b> (discard those not meeting limits) and <b>grouping</b> similar alternatives.</li>
+<li><b>Choice of alternative:</b> based on <b>satisficing</b> (most acceptable), not always maximising. Methods: experience, experimentation, research &amp; analysis. Personal values also affect choice.</li>
+<li><b>Action:</b> implement: communicate, get acceptance and support of subordinates.</li>
+<li><b>Result:</b> compare result with objective; <b>feedback</b> to correct future decisions.</li></ol>
+<p><b>Programmed vs non-programmed:</b> the full process is used for non-programmed (new, unstructured, uncertain) decisions. Programmed (routine, repetitive) decisions are handled by set rules and policies.</p>
+<div class="mnemo">Process = <b>O-P-S-E-C-A-R</b>: “<b>O</b>nly <b>P</b>ro <b>S</b>tudents <b>E</b>asily <b>C</b>lear <b>A</b>ll <b>R</b>ounds”.</div>`,
+ notes:["‘Decidere’ (Latin) = to cut off","Core of planning: what, who, when, where, how","Definitions: Kotler, Drucker, Terry, Koontz & O'Donnell, Moore","Process: Objective → Problem (diagnosis, analysis) → Search → Evaluate → Choose → Action → Result + feedback","Limiting factor narrows search; constraints & grouping narrow evaluation","Choice methods: experience, experimentation, research & analysis","Satisficing (acceptable) vs maximising; programmed vs non-programmed"]
+},
+{
+ id:"t8", n:"8", icon:"🎯", title:"Objectives & MBO", sub:"Management by Objectives", hot:true,
+ flows:[
+  {type:"cycle", title:"Steps in the MBO process", center:"MBO", items:[{t:"Define organisation goals"},{t:"Define employee objectives"},{t:"Continuous monitoring"},{t:"Performance evaluation"},{t:"Provide feedback"},{t:"Performance appraisal"}]}
+ ],
+ theory:`
+<div class="def"><b>Management by Objectives (MBO)</b> is a strategic approach where organisational goals are defined and conveyed to members, and <b>manager and employee jointly set objectives</b>, then monitor and evaluate performance against them. The concept was popularised by <b>Peter Drucker</b> (1954, <i>The Practice of Management</i>).</div>
+<p>Idea: if employees help set their own goals, they are more committed to achieving them.</p>
+<h3>Steps</h3>
+<ol><li><b>Define organisation goals:</b> set by top managers; provisional, based on what the company can achieve in a given time.</li>
+<li><b>Define employee objectives:</b> one-on-one discussion; subordinates say which targets they can achieve, when and with what resources.</li>
+<li><b>Continuous monitoring</b> of performance and progress.</li>
+<li><b>Performance evaluation:</b> reviewed with participation of the managers concerned.</li>
+<li><b>Providing feedback:</b> most essential step; helps employees track and correct actions.</li>
+<li><b>Performance appraisal:</b> routine review of success; basis for rewards.</li></ol>
+<h3>Benefits</h3>
+<ul><li>Employees understand roles and responsibilities</li><li>Key Result Areas (KRAs) specific to each employee</li><li>Better teamwork and communication</li><li>Clear expectations</li><li>Unique goals create loyalty</li><li>Individual goals linked with organisational objectives</li></ul>
+<h3>Limitations</h3>
+<ul><li>Ignores existing ethos and working conditions</li><li>Too much pressure on targets; forgets involvement and growth</li><li>Target setting over-emphasised vs operational issues</li><li>Ignores context (resources, buy-in)</li><li>Wrongly seen as a total system that solves everything</li></ul>
+<h3>Objectives should be SMART</h3>
+<p>Specific, Measurable, Achievable, Realistic/Relevant, Time-bound.</p>`,
+ notes:["MBO = joint goal setting by superior & subordinate (Peter Drucker, 1954)","Steps: Org goals → Employee objectives → Monitoring → Evaluation → Feedback → Appraisal","Feedback = most essential step","Benefits: clarity, KRAs, teamwork, loyalty, goal alignment","Limits: target pressure, ignores context & culture, seen as cure-all","Objectives should be SMART"]
+},
+{
+ id:"t9", n:"9", icon:"🏭", title:"Types of Business Organizations", sub:"Private, Public & Joint sector", hot:true,
+ flows:[
+  {type:"tree", title:"Business organisations by ownership", root:"Business Organisations", kids:[
+    {t:"Private sector",list:["Private owners / shareholders","Profit motive","Tata, Reliance, Infosys, HUL, Maruti"]},
+    {t:"Public sector",c:"navy",list:["Government owned","Social welfare","Indian Railways, SBI, ONGC, BHEL, BSNL"]},
+    {t:"Joint sector (PPP)",c:"green",list:["Govt + private","Shared risk & reward","Delhi Metro, Mumbai–Pune Expressway, Bengaluru & Hyderabad airports"]}]}
+ ],
+ theory:`
+<h3>1. Private sector</h3>
+<p>Owned and run by private individuals/entities; drives growth, jobs and innovation.</p>
+<p><b>Characteristics:</b> private ownership &amp; control, profit motive, competitive market, flexibility &amp; innovation, autonomy.<br>
+<b>Advantages:</b> efficiency, job creation, innovation, economic growth, dynamism.<br>
+<b>Disadvantages:</b> inequality, short-term focus, lack of public accountability, market failures, exploitative practices.<br>
+<b>Examples:</b> Tata Group, Reliance Industries, Infosys, Hindustan Unilever, Maruti Suzuki.</p>
+<h3>2. Public sector</h3>
+<p>Government-owned or controlled entities providing essential services.</p>
+<p><b>Characteristics:</b> government ownership (central, state, local), social welfare, public funding (taxes), public accountability, stability.<br>
+<b>Advantages:</b> social welfare, long-term planning, equity &amp; inclusivity, critical infrastructure, job security.<br>
+<b>Disadvantages:</b> bureaucracy, funding constraints, inefficiency (red tape), political interference, lack of innovation.<br>
+<b>Examples:</b> Indian Railways, SBI, ONGC, BHEL, BSNL.</p>
+<h3>3. Joint sector (Public–Private Partnership, PPP)</h3>
+<p>Government and private sector collaborate on projects or services.</p>
+<p><b>Characteristics:</b> collaboration, shared risks &amp; rewards, public service focus, private efficiency.<br>
+<b>Advantages:</b> enhanced efficiency, faster infrastructure, risk sharing, cost-effectiveness.<br>
+<b>Disadvantages:</b> complex agreements, balancing interests, public criticism, long-term commitments.<br>
+<b>Examples:</b> Delhi Metro, Mumbai–Pune Expressway, Kempegowda International Airport (Bengaluru), GMR Hyderabad International Airport.</p>
+<div class="scroll-x"><table><tr><th>Basis</th><th>Private</th><th>Public</th><th>Joint (PPP)</th></tr>
+<tr><td>Ownership</td><td>Private individuals</td><td>Government</td><td>Govt + private</td></tr>
+<tr><td>Motive</td><td>Profit</td><td>Social welfare</td><td>Public service with efficiency</td></tr>
+<tr><td>Funding</td><td>Owners, shareholders</td><td>Taxes, budgets</td><td>Both</td></tr>
+<tr><td>Accountable to</td><td>Shareholders</td><td>Public / Parliament</td><td>Contract terms</td></tr>
+<tr><td>Weakness</td><td>Inequality, short-termism</td><td>Bureaucracy, red tape</td><td>Complex agreements</td></tr></table></div>`,
+ notes:["Private: profit motive, competition, autonomy (Tata, Reliance, Infosys)","Private −: inequality, short-term focus, less public accountability","Public: govt owned, welfare, tax funded (Railways, SBI, ONGC, BHEL, BSNL)","Public −: bureaucracy, political interference, less innovation","Joint/PPP: shared risk & reward (Delhi Metro, Mumbai–Pune Expressway)","PPP −: complex agreements, balancing interests"]
+},
+{
+ id:"t10", n:"10", icon:"🔥", title:"Theories of Motivation", sub:"Maslow, Herzberg, Vroom, Locke, SDT", hot:true,
+ flows:[
+  {type:"pyr", title:"Maslow's hierarchy of needs (1943)", items:[{t:"Self-actualization",s:"become the most one can be",c:"navy"},{t:"Esteem",s:"respect, status, recognition",c:"green"},{t:"Love & belonging",s:"friendship, family"},{t:"Safety",s:"security, job, health",c:"root"},{t:"Physiological",s:"food, water, shelter, sleep",c:"red"}]},
+  {type:"duo", title:"Herzberg's two-factor theory", a:{t:"Motivators (intrinsic)",c:"green",list:["Achievement","Recognition","The work itself","Responsibility","Advancement","Growth"]}, b:{t:"Hygiene factors (extrinsic)",c:"red",list:["Salary","Job security","Working conditions","Company policies","Supervision","Relations with peers","Status"]}},
+  {type:"chain", sep:"×", title:"Vroom's expectancy theory", items:[{t:"Expectancy",s:"effort → performance"},{t:"Instrumentality",s:"performance → reward"},{t:"Valence",s:"value of reward"},{t:"= Motivation",c:"root"}]},
+  {type:"tree", title:"Goal-setting theory (Locke & Latham) · 5 principles", root:"Goal Setting", kids:[{t:"Clarity"},{t:"Challenge"},{t:"Commitment",c:"navy"},{t:"Feedback",c:"green"},{t:"Task complexity"}]},
+  {type:"chain", sep:"+", title:"Self-Determination Theory (Deci & Ryan)", items:[{t:"Autonomy",s:"choice & control"},{t:"Competence",s:"feel capable"},{t:"Relatedness",s:"connection"},{t:"= Intrinsic motivation",c:"root"}]}
+ ],
+ theory:`
+<h3>1. Maslow's Hierarchy of Needs (Abraham Maslow, 1943)</h3>
+<p>Needs are in a <b>hierarchy of five levels</b>; a lower need must be reasonably satisfied before the next one motivates. An <b>unsatisfied need motivates</b>; a satisfied need no longer does.</p>
+<ol><li><b>Physiological:</b> food, water, shelter, sleep, clothing.</li><li><b>Safety:</b> physical, emotional, financial security.</li><li><b>Social (love &amp; belonging):</b> friendship, acceptance.</li><li><b>Esteem:</b> self-respect, recognition, status, achievement.</li><li><b>Self-actualization:</b> realising full potential.</li></ol>
+<h3>2. Herzberg's Two-Factor (Motivation–Hygiene) Theory (late 1950s)</h3>
+<ul><li><b>Motivating factors</b> (intrinsic, satisfiers): achievement, recognition, work itself, responsibility, advancement, growth. These <b>create</b> motivation.</li>
+<li><b>Hygiene factors</b> (extrinsic, dissatisfiers): salary, job security, working conditions, policies, interpersonal relations, supervision, status. Their absence causes <b>dissatisfaction</b>; their presence only <b>prevents</b> dissatisfaction.</li></ul>
+<h3>3. Vroom's Expectancy Theory (1960s)</h3>
+<p><b>Motivation = Expectancy × Instrumentality × Valence</b>. Multiplicative, so if any one is zero, motivation is zero.</p>
+<ul><li><b>Expectancy:</b> belief that effort → performance.</li><li><b>Instrumentality:</b> belief that performance → reward.</li><li><b>Valence:</b> value the person places on the reward.</li></ul>
+<h3>4. Goal-Setting Theory (Edwin Locke &amp; Gary Latham, late 1960s)</h3>
+<p>Specific and challenging goals lead to higher performance than vague or easy goals. Five principles: <b>clarity, challenge, commitment, feedback, task complexity</b>.</p>
+<h3>5. Self-Determination Theory (Edward Deci &amp; Richard Ryan, 1980s)</h3>
+<p>Focus on <b>intrinsic motivation</b>. Three innate needs: <b>autonomy</b>, <b>competence</b>, <b>relatedness</b>. When met, people become intrinsically motivated, creative and engaged.</p>
+<div class="scroll-x"><table><tr><th>Maslow</th><th>Herzberg</th></tr>
+<tr><td>Physiological, Safety, Social</td><td>Hygiene factors</td></tr><tr><td>Esteem, Self-actualization</td><td>Motivators</td></tr><tr><td>5 levels, hierarchical</td><td>2 factors, not hierarchical</td></tr><tr><td>Unsatisfied need motivates</td><td>Only motivators truly motivate</td></tr></table></div>
+<div class="mnemo">Maslow bottom→top: “<b>P</b>lease <b>S</b>top <b>S</b>nacking, <b>E</b>at <b>S</b>alad” (Physiological, Safety, Social, Esteem, Self-actualization). Vroom = <b>E × I × V</b>. SDT = <b>ACR</b>.</div>`,
+ notes:["Maslow (1943): Physiological → Safety → Social → Esteem → Self-actualization","Herzberg (1950s): Motivators (achievement, recognition, work itself, growth) vs Hygiene (salary, security, conditions, policy)","Hygiene only prevents dissatisfaction","Vroom (1960s): M = Expectancy × Instrumentality × Valence","Locke & Latham: clear + challenging goals; clarity, challenge, commitment, feedback, complexity","Deci & Ryan SDT (1980s): autonomy, competence, relatedness"]
+},
+{
+ id:"t11", n:"11", icon:"🦁", title:"Leadership", sub:"Styles, situational leadership, traits", hot:true,
+ flows:[
+  {type:"tree", title:"Leadership styles", root:"Leadership Styles", kids:[{t:"Transformational",s:"inspire & change"},{t:"Transactional",s:"reward & punish",c:"navy"},{t:"Servant",s:"serve team first",c:"green"},{t:"Democratic",s:"involve team"},{t:"Autocratic",s:"decide alone",c:"red"},{t:"Laissez-faire",s:"hands-off",c:"navy"}]},
+  {type:"chain", title:"Hersey–Blanchard situational leadership (low → high readiness)", items:[{t:"S1 Telling",s:"low competence, low commitment",c:"red"},{t:"S2 Selling",s:"some competence, low commitment",c:"root"},{t:"S3 Participating",s:"high competence, variable commitment"},{t:"S4 Delegating",s:"high competence, high commitment",c:"green"}]}
+ ],
+ theory:`
+<div class="def"><b>Leadership</b> is the process of guiding and influencing individuals or groups towards a common goal. It is based on influence, not just authority or position.</div>
+<h3>Leadership styles</h3>
+<ol><li><b>Transformational:</b> inspires, shared vision, creativity, develops potential; charismatic.</li>
+<li><b>Transactional:</b> rewards and punishments; exchange relationship.</li>
+<li><b>Servant:</b> puts team's needs and development first.</li>
+<li><b>Democratic:</b> seeks input from everyone before deciding.</li>
+<li><b>Autocratic:</b> decides alone; strict control, expects obedience.</li>
+<li><b>Laissez-faire:</b> hands-off; team has high autonomy.</li></ol>
+<h3>Situational leadership (Paul Hersey &amp; Kenneth Blanchard)</h3>
+<p>Best style depends on the <b>readiness/maturity</b> of followers:</p>
+<ol><li><b>Telling (Directing):</b> specific instructions, close supervision: low competence, low commitment.</li>
+<li><b>Selling (Coaching):</b> direct + explain + seek input: some competence, low commitment.</li>
+<li><b>Participating (Supporting):</b> share decisions: high competence, variable commitment.</li>
+<li><b>Delegating:</b> little direction: high competence, high commitment.</li></ol>
+<h3>Characteristics of effective leaders (8)</h3>
+<p>Vision, communication, empathy, integrity, decision-making, adaptability, delegation, motivation.</p>
+<h3>Benefits (5)</h3>
+<p>High morale, improved productivity, employee development, better decisions, innovation.</p>
+<h3>Challenges (4)</h3>
+<p>Balancing priorities, handling conflict, dealing with uncertainty, resilience &amp; stress.</p>
+<h3>Leader vs Manager</h3>
+<div class="scroll-x"><table><tr><th>Leader</th><th>Manager</th></tr><tr><td>Influences and inspires</td><td>Plans, organises, controls</td></tr><tr><td>Power from personal qualities</td><td>Power from position</td></tr><tr><td>Focus on people &amp; vision</td><td>Focus on systems &amp; results</td></tr><tr><td>Can be informal</td><td>Formal role</td></tr></table></div>
+<div class="mnemo">Situational styles = <b>T-S-P-D</b>: “<b>T</b>eachers <b>S</b>hould <b>P</b>ass <b>D</b>udes”.</div>`,
+ notes:["Leadership = influencing people towards a common goal","Styles: Transformational, Transactional, Servant, Democratic, Autocratic, Laissez-faire","Hersey–Blanchard: Telling, Selling, Participating, Delegating (by follower readiness)","Traits: vision, communication, empathy, integrity, adaptability, delegation","Benefits: morale, productivity, development, innovation","Challenges: priorities, conflict, uncertainty, stress"]
+},
+{
+ id:"t12", n:"12", icon:"💻", title:"ERP", sub:"Enterprise Resource Planning", hot:false,
+ flows:[
+  {type:"cycle", title:"ERP integrates all business modules", center:"ERP", items:[{t:"Finance"},{t:"HR"},{t:"Procurement"},{t:"Manufacturing"},{t:"Inventory"},{t:"SCM"},{t:"CRM"},{t:"Project mgmt"},{t:"BI & analytics"}]}
+ ],
+ theory:`
+<div class="def"><b>ERP</b> is integrated software that manages all business areas (finance, HR, supply chain, manufacturing, CRM) on a <b>single platform</b> with one shared database.</div>
+<h3>Key aspects</h3>
+<ol><li><b>Integration:</b> removes data silos; real-time visibility.</li><li><b>Centralization:</b> single source of truth.</li><li><b>Streamlined processes:</b> automation, less manual entry.</li><li><b>Data analytics</b> for decisions.</li><li><b>Scalability</b> as business grows.</li><li><b>Mobile accessibility.</b></li></ol>
+<h3>Modules</h3>
+<p>Finance &amp; accounting, HR, SCM, CRM, manufacturing &amp; production, project management, business intelligence.</p>
+<h3>Advantages</h3><p>Improved efficiency, better decision-making, data accuracy, cost reduction, competitive advantage.</p>
+<h3>Challenges</h3><p>Complexity, high cost, resistance to change, customization.</p>
+<h3>Examples</h3><p>SAP, Oracle E-Business Suite, Microsoft Dynamics 365, Infor CloudSuite.</p>`,
+ notes:["ERP = integrated software, single database for all departments","Aspects: integration, centralization, streamlining, analytics, scalability, mobile","Modules: Finance, HR, SCM, CRM, Manufacturing, Projects, BI","+ efficiency, decisions, accuracy, cost cut; − complexity, cost, resistance","Examples: SAP, Oracle, MS Dynamics 365, Infor"]
+},
+{
+ id:"t12a", n:"12.1", icon:"🤝", title:"e-CRM", sub:"Electronic Customer Relationship Management", hot:false,
+ flows:[
+  {type:"cycle", title:"e-CRM cycle", center:"e-CRM", items:[{t:"Recognize customer"},{t:"360° view of customer"},{t:"Boost productivity"},{t:"Encourage teamwork"},{t:"Customer satisfaction"},{t:"Drive sales"}]}
+ ],
+ theory:`
+<div class="def"><b>e-CRM</b> manages and nurtures customer relationships using <b>electronic channels, technology and data</b>, to understand, engage and serve customers better in the digital age.</div>
+<h3>Key aspects</h3><ol><li>Data-centric approach (purchase history, preferences, feedback)</li><li>Multi-channel engagement (email, social media, website, apps, chat)</li><li>Personalization</li><li>Automation (chatbots, 24/7 support)</li><li>Analytical tools</li><li>Customer self-service</li></ol>
+<h3>Strategies</h3><p>Customer data management, segmentation, personalization, multi-channel integration, feedback &amp; surveys, automation.</p>
+<h3>Advantages</h3><p>Customer insights, better engagement &amp; loyalty, cost efficiency, competitive advantage, data-driven decisions.</p>
+<h3>Challenges</h3><p>Data privacy &amp; security, integration complexity, adoption &amp; training.</p>
+<h3>Tools</h3><p>CRM: Salesforce, Microsoft Dynamics, HubSpot. Marketing automation: Mailchimp, Marketo, Pardot. Support: Zendesk, Freshdesk.</p>`,
+ notes:["e-CRM = CRM via electronic channels + data","Aspects: data-centric, multi-channel, personalization, automation, analytics, self-service","+ insights, loyalty, cost efficiency; − privacy, integration, training","Tools: Salesforce, HubSpot, Mailchimp, Zendesk"]
+},
+{
+ id:"t12b", n:"12.2", icon:"🚚", title:"SCM", sub:"Supply Chain Management", hot:false,
+ flows:[
+  {type:"chain", title:"Flow of a supply chain", items:[{t:"Raw material",c:"navy"},{t:"Supplier"},{t:"Factory"},{t:"Distribution"},{t:"Retail"},{t:"Customer",c:"green"}]},
+  {type:"tree", title:"SCM strategies", root:"SCM Strategies", kids:[{t:"Lean",s:"cut waste"},{t:"Agile",s:"fast response",c:"navy"},{t:"Just-In-Time",s:"Toyota",c:"green"},{t:"Vendor-Managed Inventory",s:"supplier manages stock"}]}
+ ],
+ theory:`
+<div class="def"><b>SCM</b> is the planning, coordination and optimisation of the whole network that delivers products or services, covering the flow of <b>goods, information and finances</b> from the first supplier to the end customer.</div>
+<h3>Key aspects</h3><p>End-to-end perspective, collaboration, information flow, logistics &amp; transportation, inventory management, demand forecasting, integration, visibility, risk management, sustainability.</p>
+<h3>Strategies</h3><ol><li><b>Lean SCM:</b> minimise waste and inventory.</li><li><b>Agile SCM:</b> flexibility and fast response to demand.</li><li><b>Just-In-Time (JIT):</b> get materials only when needed.</li><li><b>Vendor-Managed Inventory (VMI):</b> supplier manages customer's stock.</li></ol>
+<h3>Advantages</h3><p>Cost efficiency, customer satisfaction, competitive advantage, risk mitigation, sustainability.</p>
+<h3>Challenges</h3><p>Complexity, data &amp; technology, globalization, risk management.</p>
+<h3>Examples</h3><p><b>Amazon</b> (warehousing, robotics, analytics, Prime delivery), <b>Toyota</b> (pioneered JIT), <b>Zara</b> (agile fast fashion; new products within weeks).</p>`,
+ notes:["SCM = flow of goods, info & money from supplier to customer","Raw material → Supplier → Factory → Distribution → Retail → Customer","Strategies: Lean, Agile, JIT, VMI","Examples: Amazon, Toyota (JIT), Zara (agile)","− complexity, data, globalization, risk"]
+},
+{
+ id:"t12c", n:"12.3", icon:"🔄", title:"Re-Engineering (BPR)", sub:"Business Process Re-engineering", hot:false,
+ flows:[
+  {type:"chain", v:true, title:"Steps in re-engineering", items:[{t:"Identify objectives"},{t:"Process mapping",s:"document current state"},{t:"Radical redesign",s:"heart of BPR",c:"root"},{t:"Technology integration"},{t:"Change management"},{t:"Continuous improvement",c:"green"}]}
+ ],
+ theory:`
+<div class="def"><b>Business Process Re-engineering (BPR)</b> is the <b>fundamental and radical redesign</b> of business processes to achieve <b>dramatic improvements</b> in cost, quality, service and speed. (Concept popularised by Michael Hammer &amp; James Champy, 1990s.)</div>
+<h3>Key aspects</h3><ol><li><b>Process redesign:</b> fundamental rethinking, not small tweaks.</li><li><b>Customer focus.</b></li><li><b>Cross-functional teams</b> break silos.</li><li><b>Technology utilization:</b> automation, analytics, workflow systems.</li></ol>
+<h3>Steps</h3><ol><li><b>Identify objectives:</b> clear, measurable (reduce cycle time, cut costs).</li><li><b>Process mapping:</b> document current processes, find bottlenecks.</li><li><b>Radical redesign:</b> start from scratch; the heart of BPR.</li><li><b>Technology integration.</b></li><li><b>Change management:</b> training, communication, support.</li><li><b>Continuous improvement.</b></li></ol>
+<h3>Advantages</h3><p>Operational efficiency, enhanced quality, customer satisfaction, competitive advantage.</p>
+<h3>Challenges</h3><p>Resistance to change, high risk of failure.</p>
+<h3>Example</h3><p><b>Ford Motor Company</b> (1980s): re-engineered production lines and logistics, adopted JIT inspired by Toyota, gaining big cost savings and better quality.</p>
+<p><b>BPR vs continuous improvement:</b> BPR = radical, one-time, big change; Kaizen/TQM = small, gradual, ongoing change.</p>`,
+ notes:["BPR = radical redesign for dramatic improvement","Aspects: process redesign, customer focus, cross-functional teams, technology","Steps: Objectives → Mapping → Radical redesign → Technology → Change mgmt → Continuous improvement","Example: Ford (1980s, JIT from Toyota)","− resistance to change, risk of failure"]
+},
+{
+ id:"t12d", n:"12.4", icon:"🌍", title:"WTO", sub:"World Trade Organization", hot:true,
+ flows:[
+  {type:"tree", title:"WTO: functions & agreements", root:"WTO", kids:[
+    {t:"Functions",list:["Trade negotiations","Dispute settlement","Monitoring & transparency","Technical assistance"]},
+    {t:"Agreements",c:"navy",list:["GATT (goods)","GATS (services)","TRIPS (IP)","TRIMS (investment)","Agreement on Agriculture","SCM (subsidies)"]},
+    {t:"Benefits to India",c:"green",list:["IT & software exports","Generic pharma","Textiles (quota end)","FDI & services","Dispute resolution"]}]}
+ ],
+ theory:`
+<div class="def"><b>WTO</b> is an international organisation that <b>facilitates and regulates international trade</b>. It is a global forum to negotiate trade agreements and settle disputes. Established <b>1 January 1995</b> (replacing GATT of 1947), headquartered in <b>Geneva</b>. India is a founding member.</div>
+<h3>Key functions</h3><ol><li><b>Trade negotiations:</b> tariffs, non-tariff barriers, agriculture, services, IP.</li><li><b>Dispute settlement:</b> rules-based, not retaliation.</li><li><b>Monitoring &amp; transparency</b> of trade policies.</li><li><b>Technical assistance &amp; capacity building</b> for developing countries.</li></ol>
+<h3>WTO agreements</h3><ol><li><b>GATT:</b> trade in goods; non-discrimination, Most-Favoured-Nation (MFN).</li><li><b>GATS:</b> trade in services (telecom, finance, health).</li><li><b>TRIPS:</b> intellectual property standards.</li><li><b>TRIMS:</b> investment measures affecting trade.</li><li><b>Agreement on Agriculture:</b> reduce agricultural subsidies.</li><li><b>Subsidies &amp; Countervailing Measures (SCM).</b></li></ol>
+<h3>Advantages</h3><p>Promotion of trade, conflict resolution, growth for developed and developing countries.</p>
+<h3>Criticisms</h3><p>Favours powerful economies, non-compliance and weak enforcement, protests that it ignores social/environmental concerns.</p>
+<h3>Benefits to India (10)</h3><ol><li>IT &amp; software services (Infosys, TCS, Wipro) via GATS</li><li>Pharmaceuticals: generic medicines (Cipla, Sun Pharma, HIV drugs)</li><li>Agricultural exports: rice, spices, tea</li><li>Textiles &amp; apparel: end of quotas under ATC</li><li>FDI in telecom, retail, finance</li><li>Services sector access</li><li>Dispute resolution</li><li>Trade facilitation (customs)</li><li>Technical assistance</li><li>Access to best practices</li></ol>`,
+ notes:["WTO: est. 1 Jan 1995, Geneva; replaced GATT (1947)","Functions: negotiations, dispute settlement, monitoring, technical assistance","Agreements: GATT, GATS, TRIPS, TRIMS, AoA, SCM","Criticism: favours rich nations, weak enforcement","India gains: IT (GATS), pharma generics, textiles, agri exports, FDI"]
+},
+{
+ id:"t12e", n:"12.5", icon:"💡", title:"IPR", sub:"Intellectual Property Rights", hot:true,
+ flows:[
+  {type:"tree", title:"Types of IPR", root:"IPR", kids:[{t:"Copyright",s:"books, music, films, software"},{t:"Patent",s:"inventions · ~20 years",c:"navy"},{t:"Trademark",s:"logos, names, slogans",c:"green"},{t:"Trade secret",s:"formulas, processes",c:"red"},{t:"Industrial design",s:"shape & look of products"}]}
+ ],
+ theory:`
+<div class="def"><b>Intellectual Property Rights</b> are legal rights that protect <b>intangible creations of the mind</b>, giving creators and inventors exclusive rights over their work to encourage innovation.</div>
+<h3>Types</h3><ol><li><b>Copyright:</b> literary, artistic, musical works, films, software; right to reproduce, distribute, perform, adapt. Life of author + 50 to 70 years (60 years in India).</li><li><b>Patent:</b> novel, non-obvious inventions; typically <b>20 years</b>.</li><li><b>Trademark:</b> symbols, names, slogans that identify a brand.</li><li><b>Trade secret:</b> confidential business info (e.g. formulas, customer lists).</li><li><b>Industrial design:</b> shape, surface, ornamentation of products.</li></ol>
+<h3>Key aspects</h3><ol><li><b>Exclusive rights</b></li><li><b>Duration</b> (limited time)</li><li><b>Territoriality:</b> valid only in the jurisdiction where registered</li><li><b>Enforcement:</b> damages, injunctions, destruction of fakes</li></ol>
+<h3>Importance</h3><p>Fosters innovation, economic growth, protects investment in R&amp;D, quality assurance (trademarks, geographical indications).</p>
+<h3>Examples</h3><p>Pharma patents on new drugs; copyright of a novelist; trademarks like Apple logo, Coca-Cola name, Nike swoosh.</p>`,
+ notes:["IPR = legal rights over creations of the mind","Types: Copyright, Patent (~20 yrs), Trademark, Trade secret, Industrial design","Aspects: exclusive, limited duration, territorial, enforceable","Importance: innovation, growth, protects R&D, quality assurance","TRIPS (WTO) sets global IPR standards"]
+}
+];
+const QUESTIONS = [
+ {t:"short",q:"Define management. Give any two definitions.",a:"<ul><li>Management is the process of getting things done through and with others in an organisation.</li><li>Lawrence Appley: accomplishment of results through the efforts of other people.</li><li>Taylor: knowing exactly what you want to do and seeing that it is done in the best and cheapest way.</li></ul>"},
+ {t:"short",q:"Differentiate between efficiency and effectiveness.",a:"<ul><li>Efficiency = doing things right (optimum use of resources, minimum cost).</li><li>Effectiveness = doing the right things (achieving the goal).</li><li>A good manager needs both.</li></ul>"},
+ {t:"short",q:"What are the levels of management?",a:"<ul><li>Top: goals, policies, strategy (Board, CEO).</li><li>Middle: implement plans, coordinate lower level (department heads).</li><li>Bottom/supervisory: oversee workers, daily operations.</li></ul>"},
+ {t:"short",q:"Is management an art or a science?",a:"Both. Science: organised knowledge and principles with cause–effect relation. Art: applying principles needs personal skill, creativity, experience. So management is a science and an art."},
+ {t:"short",q:"What is functional foremanship?",a:"Taylor's system of 8 specialist foremen. Planning: route clerk, instruction card clerk, time & cost clerk, disciplinarian. Doing: speed boss, inspector, maintenance foreman, gang boss. It extends separation of planning and doing."},
+ {t:"short",q:"What is ‘mental revolution’?",a:"A complete change in the attitude of both management and workers from conflict to cooperation. Taylor considered it the most important feature of scientific management; without it no principle can work."},
+ {t:"short",q:"Explain the differential piece-rate system.",a:"Taylor's wage plan: workers who complete the standard output get a higher rate per piece, those who fail get a lower rate. Creates big wage difference and motivates efficiency."},
+ {t:"short",q:"Unity of command vs unity of direction.",a:"<ul><li>Unity of command: one employee should receive orders from only one superior (about people/reporting).</li><li>Unity of direction: one head and one plan for a group of activities with the same objective (about activities/planning).</li></ul>"},
+ {t:"short",q:"What is gang plank in scalar chain?",a:"A shortcut in Fayol's scalar chain that lets two employees at the same level (F and P) communicate directly instead of going up to A and down again, provided their superiors authorise it and are informed. Saves time."},
+ {t:"short",q:"Expand POSDCORB. Who gave it?",a:"Luther Gulick: Planning, Organizing, Staffing, Directing, Coordinating, Reporting, Budgeting."},
+ {t:"short",q:"“Coordination is the essence of management.” Explain.",a:"Coordination is not a separate function but runs through all functions: planning, organising, staffing, directing, motivating, leading, communicating and controlling. It integrates efforts towards common goals, so it is the essence."},
+ {t:"short",q:"Define decision making. What is the origin of the word ‘decision’?",a:"Decision making is choosing the best alternative from several courses of action (Koontz & O'Donnell). ‘Decision’ comes from Latin ‘decidere’, meaning to cut off."},
+ {t:"short",q:"What is MBO?",a:"Management by Objectives (Peter Drucker, 1954): superior and subordinate jointly set clear objectives, monitor progress, give feedback and appraise performance against those objectives."},
+ {t:"short",q:"Hygiene factors vs motivators (Herzberg).",a:"<ul><li>Hygiene (extrinsic): salary, security, working conditions, policies. Absence → dissatisfaction; presence doesn't motivate.</li><li>Motivators (intrinsic): achievement, recognition, work itself, growth. These create real motivation.</li></ul>"},
+ {t:"short",q:"Write the formula of Vroom's expectancy theory.",a:"Motivation = Expectancy × Instrumentality × Valence. Expectancy: effort → performance; Instrumentality: performance → reward; Valence: value of reward. If any is zero, motivation is zero."},
+ {t:"short",q:"What is a PPP? Give two Indian examples.",a:"Public–Private Partnership (joint sector): government and private firms collaborate, sharing risks and rewards. Examples: Delhi Metro, Mumbai–Pune Expressway, Bengaluru & Hyderabad airports."},
+ {t:"short",q:"What is ERP? Name two ERP software.",a:"Enterprise Resource Planning: integrated software managing all functions (finance, HR, SCM, CRM, manufacturing) on one platform/database. Examples: SAP, Oracle, Microsoft Dynamics 365."},
+ {t:"short",q:"What is BPR?",a:"Business Process Re-engineering: fundamental, radical redesign of business processes for dramatic improvements in cost, quality, service and speed. Example: Ford."},
+ {t:"short",q:"Expand GATT, GATS, TRIPS, TRIMS.",a:"General Agreement on Tariffs and Trade; General Agreement on Trade in Services; Trade-Related Aspects of Intellectual Property Rights; Trade-Related Investment Measures."},
+ {t:"short",q:"Name the types of IPR.",a:"Copyright, Patent (about 20 years), Trademark, Trade secret, Industrial design (also geographical indications)."},
+ {t:"long",q:"Explain the nature of management. Differentiate between features and nature of management.",a:"<ul><li>Intro + definition.</li><li>Nature points: goal-oriented, universal, continuous, decision-making, interdisciplinary, dynamic, human-centred, efficiency & effectiveness, coordination, ethical, delegation, leadership, risk management.</li><li>Table: nature = abstract, theoretical, fundamental principles; features = concrete, practical, observable attributes.</li><li>Conclusion: both art & science, evolving discipline.</li></ul>"},
+ {t:"long",q:"Explain Taylor's scientific management: elements/tools and principles. What are its limitations?",a:"<ul><li>Taylor intro (1856–1915, Midvale & Bethlehem Steel), definition.</li><li>8 elements: separation of planning & doing, functional foremanship (draw 8-foremen chart), job analysis (motion, time, fatigue), standardisation, scientific selection & training, differential piece rate, economy, mental revolution.</li><li>5 principles: science not rule of thumb, harmony, cooperation, maximum output, development of workers.</li><li>Limitations: exploitative, depersonalised, un-psychological, undemocratic, anti-social, unoriginal, unrealistic.</li></ul>"},
+ {t:"long",q:"Explain Fayol's 14 principles of management.",a:"<ul><li>Fayol intro: French industrialist, 1916 book, father of modern management; principles are flexible.</li><li>Explain each of the 14 with 1–2 lines; draw scalar chain triangle with gang plank.</li><li>Mention 5 elements (POCCC) and 6 qualities.</li></ul>"},
+ {t:"long",q:"Compare the contributions of Taylor and Fayol.",a:"Table on: perspective (shop floor vs top management), focus (worker efficiency vs administration), unity of command (functional foremanship vs one boss), applicability (factories vs universal), basis (experiments vs experience), title (father of scientific management vs father of general management). Conclude: both complementary."},
+ {t:"long",q:"Trace the development/evolution of management thought.",a:"<ul><li>Timeline table with 10 stages and periods.</li><li>Explain: early practices, classical (scientific + administrative), human relations (Elton Mayo), quantitative, contingency (Fiedler, Woodward), modern (TQM, Six Sigma, Lean, Agile).</li></ul>"},
+ {t:"long",q:"What are the functions of management? Explain how coordination affects each function.",a:"<ul><li>Koontz & O'Donnell: planning, organising, staffing, directing, controlling (+ motivation, coordination).</li><li>Coordination with planning, organising, staffing, directing, communicating, motivating, leading, controlling.</li><li>Draw coordination-in-centre diagram. Need for coordination points.</li></ul>"},
+ {t:"long",q:"Explain centralization and decentralization with their advantages and disadvantages.",a:"<ul><li>Definitions; neither absolute.</li><li>Centralization: 6 advantages, limitation for large firms.</li><li>Decentralization: 6 advantages, 4 disadvantages.</li><li>Comparison table.</li></ul>"},
+ {t:"long",q:"Explain the process of decision making with a diagram.",a:"<ul><li>Meaning, ‘decidere’, 2–3 definitions.</li><li>Diagram: objective → problem identification → search alternatives → evaluate → choose → action → result → feedback.</li><li>Explain each: diagnosis & analysis, limiting factor, constraints & grouping, satisficing, experience/experimentation/research.</li></ul>"},
+ {t:"long",q:"What is MBO? Explain its process, benefits and limitations.",a:"<ul><li>Definition (Drucker).</li><li>6-step cycle diagram and explanation.</li><li>6 benefits and 5 limitations.</li></ul>"},
+ {t:"long",q:"Compare private, public and joint sector organisations with Indian examples.",a:"Characteristics, advantages, disadvantages of each + examples (Tata/Reliance; Railways/SBI/ONGC; Delhi Metro/Mumbai–Pune Expressway) + comparison table."},
+ {t:"long",q:"Explain Maslow's need hierarchy theory and Herzberg's two-factor theory. Compare them.",a:"<ul><li>Maslow: pyramid of 5 needs, explanation, ‘unsatisfied need motivates’.</li><li>Herzberg: motivators vs hygiene, with examples.</li><li>Comparison: lower 3 Maslow needs ≈ hygiene; esteem & self-actualisation ≈ motivators.</li></ul>"},
+ {t:"long",q:"Explain Vroom's expectancy theory, goal-setting theory and self-determination theory.",a:"Vroom: E × I × V. Locke & Latham: clarity, challenge, commitment, feedback, task complexity. Deci & Ryan: autonomy, competence, relatedness. Add a diagram for each."},
+ {t:"long",q:"What is leadership? Explain leadership styles and situational leadership theory.",a:"<ul><li>Definition.</li><li>6 styles: transformational, transactional, servant, democratic, autocratic, laissez-faire.</li><li>Hersey–Blanchard: Telling, Selling, Participating, Delegating vs follower readiness.</li><li>Qualities of effective leader, benefits, challenges.</li></ul>"},
+ {t:"long",q:"Write short notes on: ERP, e-CRM, SCM.",a:"For each: definition, key aspects (4–6), advantages, challenges, examples (SAP/Oracle; Salesforce/HubSpot; Amazon/Toyota/Zara)."},
+ {t:"long",q:"What is WTO? Explain its functions, agreements and benefits to India.",a:"<ul><li>Est. 1995, Geneva, replaced GATT.</li><li>4 functions; 6 agreements (GATT, GATS, TRIPS, TRIMS, AoA, SCM).</li><li>Advantages & criticisms.</li><li>Benefits to India: IT, pharma, agriculture, textiles, FDI, services, disputes, trade facilitation.</li></ul>"},
+ {t:"long",q:"What is IPR? Explain its types and importance.",a:"Definition; types: copyright, patent, trademark, trade secret, industrial design; aspects: exclusive, duration, territorial, enforcement; importance: innovation, growth, protect R&D, quality assurance; examples."},
+ {t:"long",q:"Explain re-engineering (BPR) and its steps.",a:"Definition, key aspects, 6 steps (objectives, mapping, radical redesign, technology, change management, continuous improvement), advantages, challenges, Ford example."}
+];
+
+const QUIZ = [
+ {q:"Who is known as the father of scientific management?",o:["Henri Fayol","F.W. Taylor","Elton Mayo","Peter Drucker"],a:1,e:"Frederick Winslow Taylor (1856–1915)."},
+ {q:"Who gave 14 principles of management?",o:["Luther Gulick","Taylor","Henri Fayol","Maslow"],a:2,e:"Henri Fayol, French industrialist."},
+ {q:"POSDCORB was given by:",o:["Koontz & O'Donnell","Luther Gulick","Fayol","Herzberg"],a:1,e:"Luther Gulick. P-O-S-D-Co-R-B."},
+ {q:"Which foreman is NOT part of Taylor's planning department?",o:["Route clerk","Instruction card clerk","Speed boss","Disciplinarian"],a:2,e:"Speed boss belongs to the doing (production) side."},
+ {q:"According to Taylor, the most important feature of scientific management is:",o:["Standardisation","Mental revolution","Time study","Incentives"],a:1,e:"Mental revolution: change from conflict to cooperation."},
+ {q:"‘One employee should receive orders from one superior only’ is:",o:["Unity of direction","Scalar chain","Unity of command","Order"],a:2,e:"Unity of command."},
+ {q:"Gang plank is related to which principle?",o:["Scalar chain","Equity","Discipline","Order"],a:0,e:"It is a shortcut within the scalar chain."},
+ {q:"‘Esprit de corps’ means:",o:["Discipline","Union is strength","Initiative","Equity"],a:1,e:"Team spirit / union is strength."},
+ {q:"Efficiency means:",o:["Doing the right things","Doing things right","Setting goals","Controlling"],a:1,e:"Effectiveness = doing the right things."},
+ {q:"‘Coordination is the ______ of management.’",o:["function","essence","end","enemy"],a:1,e:"Essence: it runs through all functions."},
+ {q:"The word ‘decision’ comes from Latin ‘decidere’, meaning:",o:["to think","to cut off","to choose","to act"],a:1,e:"To cut off."},
+ {q:"Choosing the ‘most acceptable’ rather than the best alternative is called:",o:["Maximising","Satisficing","Optimising","Programming"],a:1,e:"Satisficing approach."},
+ {q:"MBO concept was popularised by:",o:["Peter Drucker","Taylor","Vroom","Mayo"],a:0,e:"Peter Drucker, 1954."},
+ {q:"Which is a public sector organisation?",o:["Infosys","Reliance","ONGC","Maruti Suzuki"],a:2,e:"ONGC is government-owned."},
+ {q:"Delhi Metro is an example of:",o:["Private sector","Public sector","Joint sector (PPP)","Co-operative"],a:2,e:"Listed as a joint sector/PPP project."},
+ {q:"The top of Maslow's hierarchy is:",o:["Esteem","Safety","Self-actualization","Social"],a:2,e:"Self-actualization."},
+ {q:"In Herzberg's theory, salary is a:",o:["Motivator","Hygiene factor","Valence","Esteem need"],a:1,e:"Hygiene (extrinsic) factor."},
+ {q:"Vroom: Motivation = Expectancy × Instrumentality × ?",o:["Value","Valence","Vision","Variance"],a:1,e:"Valence."},
+ {q:"Goal-setting theory was proposed by:",o:["Deci & Ryan","Locke & Latham","Hersey & Blanchard","Fiedler"],a:1,e:"Edwin Locke & Gary Latham."},
+ {q:"Autonomy, competence and relatedness belong to:",o:["Self-Determination Theory","Two-factor theory","Expectancy theory","Theory X"],a:0,e:"SDT by Deci & Ryan."},
+ {q:"In situational leadership, high competence + high commitment → which style?",o:["Telling","Selling","Participating","Delegating"],a:3,e:"Delegating."},
+ {q:"SAP is an example of:",o:["e-CRM tool","ERP software","Trademark","WTO agreement"],a:1,e:"ERP software."},
+ {q:"Just-In-Time was pioneered by:",o:["Amazon","Zara","Toyota","Ford"],a:2,e:"Toyota."},
+ {q:"TRIPS deals with:",o:["Trade in services","Intellectual property","Agriculture","Investment"],a:1,e:"Trade-Related Aspects of Intellectual Property Rights."},
+ {q:"A patent is usually valid for:",o:["10 years","20 years","50 years","Lifetime + 60 years"],a:1,e:"About 20 years."}
+];
+
+/* ---------- Helpers ---------- */
+const $ = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+const norm = x => typeof x==="string" ? {t:x} : x;
+const nodeHTML = (x,i,extra="") => { x=norm(x); return `<div class="node ${x.c||""} ${extra}" style="--i:${i}">${x.t}${x.s?`<small>${x.s}</small>`:""}</div>`; };
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+};
+
+function renderFlow(f){
+  let inner="";
+  if(f.type==="chain"){
+    const sep = f.sep ? `<span class="sep">${f.sep}</span>` : `<span class="arr" aria-hidden="true"></span>`;
+    inner = `<div class="flow chain ${f.v?"v":""}">` + f.items.map((x,i)=>{
+      const last = i===f.items.length-1; const isEq = f.sep && i===f.items.length-2;
+      return nodeHTML(x,i) + (last?"": (isEq? "" : sep));
+    }).join("") + `</div>`;
+  } else if(f.type==="tree"){
+    inner = `<div class="flow tree">${nodeHTML({t:f.root,c:"root"},0)}<div class="stem"></div><div class="kids">` +
+      f.kids.map((k,i)=>`<div class="kid">${nodeHTML(k,i+1)}${k.list?`<ul>${k.list.map(l=>`<li>${l}</li>`).join("")}</ul>`:""}</div>`).join("") + `</div></div>`;
+  } else if(f.type==="cycle"){
+    const n=f.items.length, R=39;
+    inner = `<div class="flow cycle"><svg class="ring-svg" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="none" stroke="var(--gold)" stroke-width="1.2" stroke-dasharray="3 3"/><path d="M50 2 l4 -2 -4 5z" fill="var(--gold)"/></svg><div class="center">${f.center}</div>` +
+      f.items.map((x,i)=>{ const a=-Math.PI/2 + i*2*Math.PI/n; const L=50+R*Math.cos(a), T=50+R*Math.sin(a);
+        x=norm(x); return `<div class="node ${x.c||""}" style="--i:${i};left:${L}%;top:${T}%;width:${Math.min(30,2*Math.PI*R/n*0.92).toFixed(1)}%">${x.t}${x.s?`<small>${x.s}</small>`:""}</div>`; }).join("") + `</div>`;
+  } else if(f.type==="pyr"){
+    const n=f.items.length;
+    inner = `<div class="flow pyr">` + f.items.map((x,i)=>nodeHTML(x,i).replace('style="',`style="--w:${Math.round(38+ (62*i/(n-1)))}%;`)).join("") + `</div>`;
+  } else if(f.type==="duo"){
+    const col = (c,off)=>`<div class="col">${nodeHTML({t:c.t,c:c.c},off)}<ul>${c.list.map(l=>`<li>${l}</li>`).join("")}</ul></div>`;
+    inner = `<div class="flow duo">${col(f.a,0)}${col(f.b,1)}</div>`;
+  }
+  return `<div class="flowbox"><h4>${f.title}</h4>${inner}</div>`;
+}
+
+/* ---------- Render topics ---------- */
+let studied = new Set(store.get("ebm-studied",[]));
+function renderIndex(){
+  $("#index").innerHTML = TOPICS.map(t=>`<a class="tcard tilt ${studied.has(t.id)?"done":""}" href="#${t.id}"><span class="num">${t.n}</span><span class="ico">${t.icon}</span><h3>${t.title}</h3><small>${t.sub}</small>${t.hot?`<div><span class="hot">Often asked</span></div>`:""}</a>`).join("");
+  bindTilt();
+}
+function renderTopics(){
+  $("#topicPanels").innerHTML = TOPICS.map(t=>`
+  <article class="topic" id="${t.id}">
+    <div class="topic-head">
+      <div class="big" aria-hidden="true">${t.icon}</div>
+      <div class="grow"><p>Topic ${t.n}${t.hot?' · <span class="hot" style="margin:0">Often asked</span>':""}</p><h2>${t.title}</h2></div>
+      <button class="mark ${studied.has(t.id)?"on":""}" data-id="${t.id}" aria-pressed="${studied.has(t.id)}">${studied.has(t.id)?"✓ Studied":"Mark as studied"}</button>
+    </div>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-pane="flow">🗺️ Flowcharts</button>
+      <button class="tab" role="tab" aria-selected="false" data-pane="theory">📖 Theory</button>
+      <button class="tab" role="tab" aria-selected="false" data-pane="quick">⚡ Key points</button>
+    </div>
+    <div class="panes">
+      <div class="pane" data-pane="flow">${t.flows.map(renderFlow).join("")}</div>
+      <div class="pane" data-pane="theory" hidden>${t.theory}</div>
+      <div class="pane" data-pane="quick" hidden><ul>${t.notes.map(n=>`<li>${n}</li>`).join("")}</ul></div>
+    </div>
+  </article>`).join("");
+
+  $$(".topic").forEach(art=>{
+    $$(".tab",art).forEach(tab=>tab.addEventListener("click",()=>{
+      $$(".tab",art).forEach(b=>b.setAttribute("aria-selected", b===tab));
+      $$(".pane",art).forEach(p=>{ p.hidden = p.dataset.pane!==tab.dataset.pane; });
+      if(tab.dataset.pane==="flow") replayFlows(art);
+    }));
+  });
+  $$(".mark").forEach(b=>b.addEventListener("click",()=>{
+    const id=b.dataset.id;
+    studied.has(id)?studied.delete(id):studied.add(id);
+    store.set("ebm-studied",[...studied]);
+    b.classList.toggle("on",studied.has(id));
+    b.setAttribute("aria-pressed",studied.has(id));
+    b.textContent = studied.has(id)?"✓ Studied":"Mark as studied";
+    renderIndex(); updateProgress();
+  }));
+}
+function replayFlows(scope){
+  $$(".flow",scope).forEach(f=>{ f.classList.remove("in"); void f.offsetWidth; f.classList.add("in"); });
+}
+function updateProgress(){
+  const p = Math.round(studied.size/TOPICS.length*100);
+  $("#ring").style.setProperty("--p",p);
+  $("#ringTxt").textContent = p+"%";
+  $("#progTxt").textContent = `${studied.size} of ${TOPICS.length} topics studied`;
+}
+
+/* ---------- Notes ---------- */
+function renderNotes(){
+  $("#notesGrid").innerHTML = TOPICS.map(t=>`<div class="note"><h3>${t.icon} ${t.n}. ${t.title}</h3><ul>${t.notes.map(n=>`<li>${n}</li>`).join("")}</ul></div>`).join("");
+}
+
+/* ---------- Questions ---------- */
+function renderQs(filter="all"){
+  $("#qlist").innerHTML = QUESTIONS.filter(q=>filter==="all"||q.t===filter).map((q,i)=>`
+   <details class="q"><summary><span class="tag ${q.t}">${q.t==="short"?"Short":"Long"}</span><span>${q.q}</span></summary><div class="ans">${q.a.startsWith("<")?q.a:`<p>${q.a}</p>`}</div></details>`).join("");
+}
+$$("#qFilters .chip").forEach(c=>c.addEventListener("click",()=>{
+  $$("#qFilters .chip").forEach(x=>x.setAttribute("aria-pressed",x===c));
+  renderQs(c.dataset.f);
+}));
+
+/* ---------- Quiz ---------- */
+let qi=0, score=0, answered=false;
+function renderQuiz(){
+  const box=$("#quizBox");
+  if(qi>=QUIZ.length){
+    const pct=Math.round(score/QUIZ.length*100);
+    const msg = pct>=80?"Excellent! You're ready for the MTE. 🎉": pct>=50?"Good going. Revise the short notes once more. 💪":"Go through the flowcharts and short notes again, then retry. 📚";
+    box.innerHTML=`<div class="qcard" style="text-align:center"><div style="font-size:64px">${pct>=80?"🏆":pct>=50?"👍":"📘"}</div><div class="qtext">You scored ${score} / ${QUIZ.length}</div><p>${msg}</p><button class="btn" id="qRestart">Try again</button></div>`;
+    $("#qRestart").onclick=()=>{qi=0;score=0;renderQuiz();};
+    return;
+  }
+  const q=QUIZ[qi]; answered=false;
+  box.innerHTML=`<div class="qcard"><div class="qmeta"><span>Question ${qi+1} of ${QUIZ.length}</span><span>Score: ${score}</span></div>
+  <div class="qbar"><i style="width:${qi/QUIZ.length*100}%"></i></div>
+  <div class="qtext">${q.q}</div>${q.o.map((o,i)=>`<button class="opt" data-i="${i}">${String.fromCharCode(65+i)}. ${o}</button>`).join("")}
+  <div id="qexp"></div><div class="qnav"><button class="btn" id="qNext" disabled style="opacity:.5">Next question</button></div></div>`;
+  $$(".opt",box).forEach(b=>b.addEventListener("click",()=>{
+    if(answered) return; answered=true;
+    const i=+b.dataset.i;
+    $$(".opt",box).forEach(x=>{x.disabled=true; if(+x.dataset.i===q.a) x.classList.add("right");});
+    if(i===q.a){score++;} else b.classList.add("wrong");
+    $("#qexp").innerHTML=`<div class="qexp">${i===q.a?"✅ Correct. ":"❌ Not quite. "}${q.e}</div>`;
+    const n=$("#qNext"); n.disabled=false; n.style.opacity=1; n.focus();
+  }));
+  $("#qNext").onclick=()=>{qi++;renderQuiz();};
+}
+
+/* ---------- 3D tilt ---------- */
+const canTilt = matchMedia("(hover:hover) and (pointer:fine)").matches && !matchMedia("(prefers-reduced-motion: reduce)").matches;
+function bindTilt(){
+  if(!canTilt) return;
+  $$(".tilt").forEach(el=>{
+    el.onpointermove=e=>{const r=el.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+      el.style.transform=`perspective(700px) rotateX(${-y*14}deg) rotateY(${x*14}deg) translateZ(6px)`;};
+    el.onpointerleave=()=>{el.style.transform="";};
+  });
+}
+
+/* ---------- Observers, scroll, theme ---------- */
+function observeFlows(){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target);} }),{threshold:.2});
+  $$(".flow").forEach(f=>io.observe(f));
+}
+addEventListener("scroll",()=>{
+  const h=document.documentElement; const p=h.scrollTop/(h.scrollHeight-h.clientHeight||1);
+  $("#scrollbar").style.width=(p*100)+"%";
+  $("#totop").classList.toggle("show",h.scrollTop>700);
+},{passive:true});
+$("#totop").onclick=()=>scrollTo({top:0,behavior:"smooth"});
+
+
+
+/* ---------- Splash ---------- */
+(function splash(){
+  const el=$("#splashName"); const txt=el.textContent;
+  el.innerHTML=[...txt].map((c,i)=>`<span style="animation-delay:${.5+i*.06}s">${c===" "?"&nbsp;":c}</span>`).join("");
+  const sp=$("#splash"); let done=false;
+  const hide=()=>{ if(done) return; done=true; sp.classList.add("hide"); setTimeout(()=>sp.remove(),800); };
+  sp.addEventListener("click",hide);
+  addEventListener("keydown",hide,{once:true});
+  setTimeout(hide,3200);
+})();
+
+renderIndex(); renderTopics(); renderNotes(); renderQs(); renderQuiz(); updateProgress(); observeFlows();
+</script>
+</body>
+</html>
